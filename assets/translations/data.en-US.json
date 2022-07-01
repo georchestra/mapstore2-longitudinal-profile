@@ -1,8 +1,34 @@
     {
     "locale": "en-US",
     "messages": {
-        "extension": {
-            "message": "Message!"
+        "longitudinal": {
+            "title": "Longitudinal profile",
+            "draw": "Draw profile",
+            "import": "Load JSON file",
+            "select": "Selection to profile",
+            "parameters": "Parameters",
+            "help": {
+              "draw": "Click on the map to draw the line. Click one more time on end point to finish.",
+              "select": "Please select layer in TOC and click on the line feature to generate profile.<br/>Selected layer: {layerName}",
+              "noLayer": "No layer selected",
+              "notSupportedLayer": "not supported. Please select WMS, WFS or vector layer."
+            },
+            "warnings": {
+              "noLayerSelected": "Please select layer first.",
+              "layerNotSupported": "Selected layer is not supported. Please select WMS, WFS or vector layer.",
+              "noFeatureInPoint": "Line feature was not found at selected point."
+            },
+            "elevation": "Elevation (m)",
+            "distance": "Distance (m)",
+          "settings": {
+            "referential": "Referential",
+            "distance": "Distance"
+          },
+          "dropZone": {
+            "heading": "<p><h4>Drop your JSON files here</h4><small>or</small></p>",
+            "selectFiles": "Select files...",
+            "infoSupported": "<p><small>Supported file types: GeoJSON</small></p>"
+          }
         }
     }
 }

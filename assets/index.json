@@ -1,9 +1,35 @@
 {
   "plugins": [
     {
-      "name": "SampleExtension",
+      "name": "LongitudinalProfile",
+      "title": "Longitudinal Profile",
+      "description": "Tool to build longitudinal profile using drawn, selected or imported line feature",
+      "glyph": "line",
+      "docUrl": "",
+      "defaultConfig": {
+        "wpsurl": "/geoserver/wps",
+        "identifier": "gs:ProfilEnLong",
+        "referentiels": [
+          {
+            "layerName": "sfdem",
+            "title": "sfdem"
+          }
+        ],
+        "distances": [
+          1,
+          5,
+          10,
+          50,
+          100,
+          500,
+          1000,
+          5000
+        ],
+        "defaultDistance": 100,
+        "defaultReferentiel": "sfdem"
+      },
       "dependencies": [
-        "Toolbar"
+        "SidebarMenu"
       ]
     }
   ]

@@ -8,6 +8,8 @@
 
 import { checkForMissingPlugins } from '@mapstore/utils/DebugUtils';
 import main from '@mapstore/product/main';
+import MapViewer from "@mapstore/product/pages/MapViewer";
+
 const ConfigUtils = require('@mapstore/utils/ConfigUtils').default;
 /**
  * Add custom (overriding) translations with:
@@ -36,7 +38,24 @@ ConfigUtils.setConfigProp('themePrefix', 'MapStoreExtension');
  *     }]
  * };
  */
-const appConfig = require('@mapstore/product/appConfig').default;
+const cfg = require('@mapstore/product/appConfig').default;
+
+const appConfig = {
+    ...cfg,
+    pages: [
+        {
+            name: "mapviewer",
+            path: "/",
+            component: MapViewer
+        },
+        {
+            name: "mapviewer",
+            path: "/viewer/:mapType/:mapId",
+            component: MapViewer
+        }
+    ],
+    appEpics: {}
+};
 
 /**
  * Define a custom list of plugins with:

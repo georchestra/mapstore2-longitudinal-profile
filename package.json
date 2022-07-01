@@ -1,7 +1,7 @@
 {
-    "name": "MapStoreExtension",
+    "name": "longitutdinal_profile",
     "version": "1.0.0",
-    "description": "Template project to create MapStore extensions",
+    "description": "Tool to build longitudinal profile using drawn, selected or imported line feature",
     "main": "index.js",
     "eslintConfig": {
         "extends": [
