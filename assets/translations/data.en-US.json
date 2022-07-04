@@ -16,7 +16,8 @@
             "warnings": {
               "noLayerSelected": "Please select layer first.",
               "layerNotSupported": "Selected layer is not supported. Please select WMS, WFS or vector layer.",
-              "noFeatureInPoint": "Line feature was not found at selected point."
+              "noFeatureInPoint": "Line feature was not found at selected point.",
+              "noLineFeatureFound": "Line feature was not found in imported file."
             },
             "elevation": "Elevation (m)",
             "distance": "Distance (m)",

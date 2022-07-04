@@ -1,5 +1,5 @@
-
 import Rx from 'rxjs';
+import turfCenter from '@turf/center';
 
 import {SET_CONTROL_PROPERTY, setControlProperty} from "@mapstore/actions/controls";
 import {
@@ -8,7 +8,12 @@ import {
     geometrySelector,
     isDockOpen
 } from "@js/extension/selectors";
-import {CONTROL_DOCK_NAME, CONTROL_NAME, CONTROL_PROPERTIES_NAME} from "@js/extension/constants";
+import {
+    CONTROL_DOCK_NAME,
+    CONTROL_NAME,
+    CONTROL_PROPERTIES_NAME, LONGITUDINAL_OWNER,
+    LONGITUDINAL_VECTOR_LAYER_ID
+} from "@js/extension/constants";
 import {changeDrawingStatus, END_DRAWING} from "@mapstore/actions/draw";
 import {
     addProfileData, changeDistance, changeReferential, initialized,
@@ -23,10 +28,14 @@ import {profileEnLong} from "@js/extension/observables/wps/profile";
 import {wrapStartStop} from "@mapstore/observables/epics";
 import {error} from "@mapstore/actions/notifications";
 import {UPDATE_MAP_LAYOUT, updateDockPanelsList, updateMapLayout} from "@mapstore/actions/maplayout";
-import {mapInfoEnabledSelector} from "@mapstore/selectors/mapInfo";
+import {highlightStyleSelector, mapInfoEnabledSelector} from "@mapstore/selectors/mapInfo";
 import {toggleMapInfoState} from "@mapstore/actions/mapInfo";
-import {registerEventListener, unRegisterEventListener} from "@mapstore/actions/map";
-import {get} from "lodash";
+import {changeMapView, registerEventListener, unRegisterEventListener} from "@mapstore/actions/map";
+import {get, omit} from "lodash";
+import {removeAdditionalLayer, updateAdditionalLayer} from "@mapstore/actions/additionallayers";
+import {styleFeatures} from "@js/extension/utils/geojson";
+import {reprojectGeoJson} from "@mapstore/utils/CoordinatesUtils";
+import {mapSelector} from "@mapstore/selectors/map";
 
 const OFFSET = 550;
 
@@ -44,6 +53,17 @@ export const setupLongitudinalExtension = (action$) =>
                 updateDockPanelsList(CONTROL_DOCK_NAME, "add", "right"),
                 changeReferential(defaultReferentiel ?? referentiels[0].layerName),
                 changeDistance(defaultDistance ?? distances[0]),
+                updateAdditionalLayer(
+                    LONGITUDINAL_VECTOR_LAYER_ID,
+                    LONGITUDINAL_OWNER,
+                    'overlay',
+                    {
+                        id: LONGITUDINAL_VECTOR_LAYER_ID,
+                        features: [],
+                        type: "vector",
+                        name: "selectedLine",
+                        visibility: true
+                    }),
                 initialized()
             );
         })
@@ -60,7 +80,8 @@ export const cleanOnTearDown = (action$) =>
                 setControlProperty(CONTROL_NAME, 'dataSourceMode', false),
                 setControlProperty(CONTROL_DOCK_NAME, 'enabled', false),
                 setControlProperty(CONTROL_PROPERTIES_NAME, 'enabled', false),
-                updateDockPanelsList(CONTROL_NAME, "remove", "right")
+                updateDockPanelsList(CONTROL_NAME, "remove", "right"),
+                removeAdditionalLayer({id: LONGITUDINAL_VECTOR_LAYER_ID, owner: LONGITUDINAL_OWNER})
             );
         });
 
@@ -93,10 +114,9 @@ export const onDrawActivated = (action$, store) =>
             default:
                 return Rx.Observable.from([
                     ...(get(store.getState(), 'draw.drawOwner', '') === CONTROL_NAME ? DEACTIVATE_ACTIONS : []),
-                    unRegisterEventListener('click', CONTROL_NAME)]
-                );
+                    unRegisterEventListener('click', CONTROL_NAME)
+                ]);
             }
-
         });
 
 export const onChartPropsChange = (action$, store) =>
@@ -115,10 +135,32 @@ export const onChartPropsChange = (action$, store) =>
             return executeProcess(wpsurl, profileEnLong({identifier, geometry, distance, referentiel }),
                 {outputsExtractor: makeOutputsExtractor()})
                 .switchMap((result) => {
+                    const feature = {
+                        type: 'Feature',
+                        geometry
+                    };
+                    const map = mapSelector(state);
+                    const center = turfCenter(reprojectGeoJson(feature, geometry.projection, 'EPSG:4326')).geometry.coordinates;
                     const { infos, points } = result?.profile ?? {};
+                    const styledFeatures = styleFeatures([feature], omit(highlightStyleSelector(state), ["radius"]));
+                    const features = styledFeatures && geometry.projection ? styledFeatures.map( f => reprojectGeoJson(
+                        f,
+                        geometry.projection
+                    )) : styledFeatures;
                     return infos && points ? Rx.Observable.from([
-                        addProfileData(infos, points),
-                        ...(!isDockOpen(state) ? [openDock()] : [])
+                        updateAdditionalLayer(
+                            LONGITUDINAL_VECTOR_LAYER_ID,
+                            LONGITUDINAL_OWNER,
+                            'overlay',
+                            {
+                                id: LONGITUDINAL_VECTOR_LAYER_ID,
+                                features,
+                                type: "vector",
+                                name: "selectedLine",
+                                visibility: true
+                            }),
+                        changeMapView({x: center[0], y: center[1]}, map.zoom, map.bbox, map.size, null, map.projection),
+                        addProfileData(infos, points)
                     ]) : Rx.Observable.empty();
                 })
                 .catch(e => {
@@ -127,7 +169,7 @@ export const onChartPropsChange = (action$, store) =>
                     return Rx.Observable.empty();
                 })
                 .let(wrapStartStop(
-                    [loading(true)],
+                    [loading(true), ...(!isDockOpen(state) ? [openDock()] : [])],
                     loading(false),
                     () => Rx.Observable.of(error({
                         title: "notification.error",
@@ -147,7 +189,10 @@ export const onDockClosed = (action$) =>
     action$.ofType(SET_CONTROL_PROPERTY)
         .filter(({control, property, value}) => control === CONTROL_DOCK_NAME && property === 'enabled' && value === false)
         .switchMap(() => {
-            return Rx.Observable.of(changeGeometry(false));
+            return Rx.Observable.from([
+                changeGeometry(false),
+                removeAdditionalLayer({id: LONGITUDINAL_VECTOR_LAYER_ID, owner: LONGITUDINAL_OWNER})
+            ]);
         });
 
 /**

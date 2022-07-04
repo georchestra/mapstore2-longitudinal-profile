@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import HTML from '@mapstore/components/I18N/HTML';
 import {getLayerTitle} from "@mapstore/utils/LayersUtils";
 
-export const HelpInfo = ({dataSourceMode, style, messages, selectedLayer, isSupportedLayer, currentLocale}) => {
+export const HelpInfo = ({dataSourceMode, messages, selectedLayer, isSupportedLayer, currentLocale}) => {
     if (dataSourceMode && dataSourceMode !== 'import') {
         let layerTitle = messages?.longitudinal?.help?.noLayer;
         if (selectedLayer) {
@@ -11,7 +11,7 @@ export const HelpInfo = ({dataSourceMode, style, messages, selectedLayer, isSupp
         }
 
         return (
-            <div style={style} className={classnames({
+            <div className={classnames({
                 'longitude-help': true
             })}>
                 <HTML msgId={`longitudinal.help.${dataSourceMode}`}

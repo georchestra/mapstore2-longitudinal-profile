@@ -19,7 +19,16 @@ import {
 import * as epics from '@js/extension/epics';
 import longitudinal from '@js/extension/reducers/longitudinal';
 import '../assets/style.css';
-import {closeDock, setup, tearDown, toggleMode, changeReferential, changeDistance} from "@js/extension/actions/longitude";
+import {
+    closeDock,
+    setup,
+    tearDown,
+    toggleMode,
+    changeReferential,
+    changeDistance,
+    changeGeometry
+} from "@js/extension/actions/longitude";
+import { warning } from '@mapstore/actions/notifications';
 import {mapLayoutValuesSelector} from "@mapstore/selectors/maplayout";
 import {currentLocaleSelector, currentMessagesSelector} from "@mapstore/selectors/locale";
 import {exportCSV} from "@mapstore/actions/widgets";
@@ -70,9 +79,11 @@ export default {
             onChangeReferential: changeReferential,
             onChangeDistance: changeDistance,
             onToggleSourceMode: toggleMode,
+            changeGeometry: changeGeometry,
             setup,
             tearDown,
-            exportCSV
+            exportCSV,
+            warning
         })(Main),
     containers: {
         SidebarMenu: {

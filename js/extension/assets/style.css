@@ -1,14 +1,3 @@
-#SAMPLE_EXTENSION {
-    background-color: rgba(255,255,255,.9);
-    border-radius: 10px;
-    max-width: 550px;
-    padding: 10px;
-    margin: 10px;
-    position: absolute;
-    top: 50px;
-    z-index: 1000;
-}
-
 .longitudinal-icon {
     height: 100%;
     width: 100%;
@@ -26,15 +15,16 @@
 
 .longitude-help {
     position: absolute;
-    right: 90px;
-    bottom: 35px;
+    right: 50%;
+    transform: translateX(50%);
+    top: 45px;
     width: 300px;
     background: #00000088;
     color: white;
     border-radius: 3px;
     z-index: 1;
     padding: 10px;
-    opacity: 0.7;
+    opacity: 0.8;
     pointer-events: none;
     white-space: pre-line;
 }

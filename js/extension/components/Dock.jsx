@@ -8,17 +8,18 @@ import ResponsivePanel from "@mapstore/components/misc/panels/ResponsivePanel";
 import tooltip from "@mapstore/components/misc/enhancers/tooltip";
 import Chart from "@js/extension/components/Chart";
 import Button from "@mapstore/components/misc/Button";
+import Loader from "@mapstore/components/misc/Loader";
 
 const NavItemT = tooltip(NavItem);
 
-const ChartData = ({ points, messages, ...props }) => {
-    const data = points.map((point) => ({
+const ChartData = ({ points, messages, loading, ...props }) => {
+    const data = points ? points.map((point) => ({
         distance: point[0],
         x: point[1],
         y: point[2],
         altitude: point[3],
         incline: point[4]
-    }));
+    })) : [];
 
     const series = [{dataKey: "altitude", color: `#078aa3`}];
     const xAxis = {dataKey: "distance", show: false, showgrid: true};
@@ -43,21 +44,24 @@ const ChartData = ({ points, messages, ...props }) => {
         xAxisLabel: messages.longitudinal.distance
     };
 
-    return (<div className="longitudinal-container">
-        <Chart {...options} data={data} series={series} xAxis={xAxis} />
-        {
-            data.length ? (
-                <ButtonGroup>
-                    <Button bsStyle="primary" onClick={() => props.exportCSV({data, title: 'Test'})} className="export">
-                        <Glyphicon glyph="download"/> <Message msgId="widgets.widget.menu.downloadData" />
-                    </Button>
-                </ButtonGroup>
-            ) : null
-        }
-
-    </div>);
+    return loading
+        ? <div className=" loading"><Loader size={176} /></div>
+        : (
+            <div className="longitudinal-container">
+                <Chart {...options} data={data} series={series} xAxis={xAxis} />
+                {
+                    data.length ? (
+                        <ButtonGroup>
+                            <Button bsStyle="primary" onClick={() => props.exportCSV({data, title: 'Test'})} className="export">
+                                <Glyphicon glyph="download"/> <Message msgId="widgets.widget.menu.downloadData" />
+                            </Button>
+                        </ButtonGroup>
+                    ) : null
+                }
+            </div>
+        );
 };
-const Information = ({infos, messages}) => {
+const Information = ({infos, messages, loading}) => {
     const infoConfig = [
         {
             glyph: '1-layer',
@@ -86,7 +90,7 @@ const Information = ({infos, messages}) => {
         }
     ];
 
-    return (<div className="longitudinal-container">
+    return loading ? <div className=" loading"><Loader size={176} /></div> : (<div className="longitudinal-container">
         {
             infoConfig.map((conf) => (
                 <div className="stats-entry" key={conf.prop}>

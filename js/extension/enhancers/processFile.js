@@ -6,18 +6,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { get } from 'lodash';
+import {get} from 'lodash';
 import { compose, createEventHandler, mapPropsStream } from 'recompose';
 import Rx from 'rxjs';
 
-import { isAnnotation } from '@mapstore/utils/AnnotationsUtils';
 import ConfigUtils from '@mapstore/utils/ConfigUtils';
 import {
     MIME_LOOKUPS,
     readJson,
     recognizeExt
 } from '@mapstore/utils/FileUtils';
-import { geoJSONToLayer } from '@mapstore/utils/LayersUtils';
+import {flattenImportedFeatures} from "@js/extension/utils/geojson";
 
 
 /**
@@ -57,9 +56,6 @@ const readFile = () => (file) => {
     return null;
 };
 
-const isGeoJSON = json => json && json.features && json.features.length !== 0;
-const isMap = json => json && json.version && json.map;
-
 /**
  * Enhancers a component to process files on drop event.
  * Recognizes map files (JSON format) or vector data in various formats.
@@ -75,26 +71,13 @@ export default compose(
                     files => Rx.Observable.from(files)
                         .flatMap(checkFileType) // check file types are allowed
                         .flatMap(readFile(onWarnings)) // read files to convert to json
-                        .reduce((result, jsonObjects) => ({ // divide files by type
-                            layers: (result.layers || [])
-                                .concat(
-                                    jsonObjects.filter(json => isGeoJSON(json))
-                                        .map(json => (isAnnotation(json) ?
-                                            // annotation GeoJSON to layers
-                                            { name: "Annotations", features: json?.features || [], filename: json.filename} :
-                                            // other GeoJSON to layers
-                                            {...geoJSONToLayer(json), filename: json.filename}))
-                                ),
-                            maps: (result.maps || [])
-                                .concat(
-                                    jsonObjects.filter(json => isMap(json))
-
-                                )
-                        }), {})
-                        .map(filesMap => ({
-                            loading: false,
-                            files: filesMap
-                        }))
+                        .map(res => {
+                            return ({
+                                loading: false,
+                                flattenFeatures: flattenImportedFeatures(res),
+                                crs: 'EPSG:4326'
+                            });
+                        })
                         .catch(error => Rx.Observable.of({error, loading: false}))
                         .startWith({ loading: true})
                 )
