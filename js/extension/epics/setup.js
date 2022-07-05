@@ -6,7 +6,8 @@ import {
     configSelector,
     dataSourceMode,
     geometrySelector,
-    isDockOpen
+    isDockOpen,
+    isMaximized
 } from "@js/extension/selectors";
 import {
     CONTROL_DOCK_NAME,
@@ -21,7 +22,7 @@ import {
     openDock, SETUP,
     TEAR_DOWN,
     TOGGLE_MODE,
-    CHANGE_GEOMETRY, CHANGE_DISTANCE, CHANGE_REFERENTIAL, changeGeometry
+    CHANGE_GEOMETRY, CHANGE_DISTANCE, CHANGE_REFERENTIAL, changeGeometry, toggleMaximize
 } from "@js/extension/actions/longitude";
 import executeProcess, {makeOutputsExtractor} from "@mapstore/observables/wps/execute";
 import {profileEnLong} from "@js/extension/observables/wps/profile";
@@ -183,15 +184,17 @@ export const onChartPropsChange = (action$, store) =>
 /**
  * Cleanup geometry when dock is closed
  * @param action$
+ * @param store
  * @returns {*}
  */
-export const onDockClosed = (action$) =>
+export const onDockClosed = (action$, store) =>
     action$.ofType(SET_CONTROL_PROPERTY)
         .filter(({control, property, value}) => control === CONTROL_DOCK_NAME && property === 'enabled' && value === false)
         .switchMap(() => {
             return Rx.Observable.from([
                 changeGeometry(false),
-                removeAdditionalLayer({id: LONGITUDINAL_VECTOR_LAYER_ID, owner: LONGITUDINAL_OWNER})
+                removeAdditionalLayer({id: LONGITUDINAL_VECTOR_LAYER_ID, owner: LONGITUDINAL_OWNER}),
+                ...(isMaximized(store.getState()) ? [toggleMaximize()] : [])
             ]);
         });
 
