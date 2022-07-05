@@ -13,7 +13,8 @@ import {
     isActiveMenu,
     isDockOpen, isInitialized,
     isParametersOpen, isSupportedLayer,
-    pointsSelector, referentialSelector
+    pointsSelector, referentialSelector,
+    isMaximized
 } from "@js/extension/selectors";
 
 import * as epics from '@js/extension/epics';
@@ -26,10 +27,11 @@ import {
     toggleMode,
     changeReferential,
     changeDistance,
-    changeGeometry
+    changeGeometry,
+    toggleMaximize
 } from "@js/extension/actions/longitude";
 import { warning } from '@mapstore/actions/notifications';
-import {mapLayoutValuesSelector} from "@mapstore/selectors/maplayout";
+import {boundingSidebarRectSelector, mapLayoutValuesSelector} from "@mapstore/selectors/maplayout";
 import {currentLocaleSelector, currentMessagesSelector} from "@mapstore/selectors/locale";
 import {exportCSV} from "@mapstore/actions/widgets";
 import {getSelectedLayer} from "@mapstore/selectors/layers";
@@ -49,7 +51,9 @@ const selector = (state) => ({
     selectedLayer: getSelectedLayer(state),
     isSupportedLayer: isSupportedLayer(state),
     messages: currentMessagesSelector(state),
-    currentLocale: currentLocaleSelector(state)
+    currentLocale: currentLocaleSelector(state),
+    maximized: isMaximized(state),
+    boundingRect: boundingSidebarRectSelector(state)
 });
 
 export const LongitudinalNav = connect((state) => ({
@@ -80,6 +84,7 @@ export default {
             onChangeDistance: changeDistance,
             onToggleSourceMode: toggleMode,
             changeGeometry: changeGeometry,
+            toggleMaximize,
             setup,
             tearDown,
             exportCSV,

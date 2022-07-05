@@ -5,7 +5,7 @@ import {
     CHANGE_REFERENTIAL,
     CHANGE_DISTANCE,
     INITIALIZED, CHANGE_GEOMETRY, TEAR_DOWN,
-    SETUP
+    SETUP, TOGGLE_MAXIMIZE
 } from "@js/extension/actions/longitude";
 
 const DEFAULT_STATE = {
@@ -16,7 +16,8 @@ const DEFAULT_STATE = {
     loading: false,
     referential: false,
     distance: false,
-    geometry: false
+    geometry: false,
+    maximized: false
 };
 
 /**
@@ -88,6 +89,11 @@ export default function longitudinal(state = DEFAULT_STATE, action) {
         return {
             ...state,
             geometry: action.geometry
+        };
+    case TOGGLE_MAXIMIZE:
+        return {
+            ...state,
+            maximized: !state.maximized
         };
     default:
         return state;

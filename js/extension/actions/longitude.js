@@ -10,6 +10,7 @@ export const LOADING = "LONGITUDINAL:LOADING";
 export const CHANGE_REFERENTIAL = "LONGITUDINAL:CHANGE_REFERENTIAL";
 export const CHANGE_DISTANCE = "LONGITUDINAL:CHANGE_DISTANCE";
 export const CHANGE_GEOMETRY = "LONGITUDINAL:CHANGE_GEOMETRY";
+export const TOGGLE_MAXIMIZE = "LONGITUDINAL:TOGGLE_MAXIMIZE";
 
 export const setup = (config) => ({
     type: SETUP,
@@ -64,4 +65,7 @@ export const changeDistance = (distance) => ({
 export const changeGeometry = (geometry) => ({
     type: CHANGE_GEOMETRY,
     geometry
+});
+export const toggleMaximize = () => ({
+    type: TOGGLE_MAXIMIZE
 });

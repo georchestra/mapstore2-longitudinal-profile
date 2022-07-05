@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { Row, Col, Nav, NavItem, Glyphicon, ButtonGroup, FormGroup, ControlLabel } from 'react-bootstrap';
 import Select from "react-select";
@@ -9,10 +10,11 @@ import tooltip from "@mapstore/components/misc/enhancers/tooltip";
 import Chart from "@js/extension/components/Chart";
 import Button from "@mapstore/components/misc/Button";
 import Loader from "@mapstore/components/misc/Loader";
+import Toolbar from "@mapstore/components/misc/toolbar/Toolbar";
 
 const NavItemT = tooltip(NavItem);
 
-const ChartData = ({ points, messages, loading, ...props }) => {
+const ChartData = ({ points, messages, loading, maximized, toggleMaximize, boundingRect, dockStyle, ...props }) => {
     const data = points ? points.map((point) => ({
         distance: point[0],
         x: point[1],
@@ -30,8 +32,8 @@ const ChartData = ({ points, messages, loading, ...props }) => {
         legend: false,
         tooltip: false,
         cartesian: true,
-        width: 520,
-        height: 400,
+        width: maximized ? window.innerWidth - 30 - (dockStyle?.right ?? 0) - (dockStyle?.left ?? 0) : 520,
+        height: maximized ? window.innerHeight - 115 : 400,
         popup: false,
         xAxisOpts: {
             hide: false,
@@ -44,10 +46,31 @@ const ChartData = ({ points, messages, loading, ...props }) => {
         xAxisLabel: messages.longitudinal.distance
     };
 
-    return loading
-        ? <div className=" loading"><Loader size={176} /></div>
+    const content = loading
+        ? <div className="longitudinal-container"><div className="loading"><Loader size={176} /></div></div>
         : (
             <div className="longitudinal-container">
+                <Toolbar
+                    btnGroupProps={{
+                        className: "chart-toolbar"
+                    }}
+                    btnDefaultProps={{
+                        className: 'no-border',
+                        bsSize: 'xs',
+                        bsStyle: 'link'
+                    }}
+                    buttons={[
+                        {
+                            glyph: maximized ? 'resize-small' : 'resize-full',
+                            target: 'icons',
+                            tooltipId: `widgets.widget.menu.${maximized ? 'minimize' : 'maximize'}`,
+                            tooltipPosition: 'right',
+                            visible: true,
+                            onClick: () => toggleMaximize()
+                        }
+                    ]}
+                >
+                </Toolbar>
                 <Chart {...options} data={data} series={series} xAxis={xAxis} />
                 {
                     data.length ? (
@@ -60,6 +83,13 @@ const ChartData = ({ points, messages, loading, ...props }) => {
                 }
             </div>
         );
+
+    if (maximized) {
+        return ReactDOM.createPortal(
+            content,
+            document.getElementById('dock-chart-portal'));
+    }
+    return content;
 };
 const Information = ({infos, messages, loading}) => {
     const infoConfig = [
@@ -178,6 +208,15 @@ const Dock = ({showDock, onCloseDock, ...props}) => {
             open={showDock}
             onClose={onCloseDock}
             style={props.dockStyle}
+            siblings={
+                <div id="dock-chart-portal"
+                    className={props.maximized ? "visible" : ""}
+                    style={{
+                        transform: `translateX(${(props.dockStyle?.right ?? 0)}px)`,
+                        height: props.dockStyle?.height
+                    }}>
+                </div>
+            }
             header={[
                 <Row key="longitudinal-dock-navbar" className="ms-row-tab">
                     <Col xs={12}>

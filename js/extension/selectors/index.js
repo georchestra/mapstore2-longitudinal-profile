@@ -30,3 +30,5 @@ export const isSupportedLayer = (state) => {
 
 export const isListeningClick = (state) => !!(get(mapSelector(state), 'eventListeners.click', []).find((el) => el === CONTROL_NAME));
 
+export const isMaximized = (state) => state?.longitudinal?.maximized;
+
