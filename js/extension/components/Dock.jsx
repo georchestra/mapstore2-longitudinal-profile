@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { Row, Col, Nav, NavItem, Glyphicon, ButtonGroup, FormGroup, ControlLabel } from 'react-bootstrap';
-import Select from "react-select";
+import {ButtonGroup, Col, Glyphicon, Nav, NavItem, Row} from 'react-bootstrap';
 
 import Message from "@mapstore/components/I18N/Message";
 import ResponsivePanel from "@mapstore/components/misc/panels/ResponsivePanel";
@@ -12,6 +11,7 @@ import Button from "@mapstore/components/misc/Button";
 import Loader from "@mapstore/components/misc/Loader";
 import Toolbar from "@mapstore/components/misc/toolbar/Toolbar";
 import ContainerDimensions from 'react-container-dimensions';
+import {Properties} from "@js/extension/components/Properties";
 
 const NavItemT = tooltip(NavItem);
 
@@ -63,7 +63,7 @@ const ChartData = ({ points, messages, loading, maximized, toggleMaximize, bound
                             glyph: maximized ? 'resize-small' : 'resize-full',
                             target: 'icons',
                             tooltipId: `widgets.widget.menu.${maximized ? 'minimize' : 'maximize'}`,
-                            tooltipPosition: 'right',
+                            tooltipPosition: 'left',
                             visible: true,
                             onClick: () => toggleMaximize()
                         }
@@ -144,32 +144,6 @@ const Information = ({infos, messages, loading}) => {
         }
     </div>);
 };
-const Properties = ({ onChangeReferential, onChangeDistance, distance, referential, pluginCfg: { distances, referentiels } }) => {
-    return (
-        <div className="longitudinal-container">
-            <FormGroup bsSize="small">
-                <ControlLabel><Message msgId="longitudinal.settings.referential" /></ControlLabel>
-                <Select
-                    id="referential"
-                    value={referential}
-                    clearable={false}
-                    options={referentiels.map(r => ({ value: r.layerName, label: r.title}))}
-                    onChange={(selected) => onChangeReferential(selected?.value)}
-                />
-            </FormGroup>
-            <FormGroup bsSize="small">
-                <ControlLabel><Message msgId="longitudinal.settings.distance" /></ControlLabel>
-                <Select
-                    id="distance"
-                    value={distance}
-                    clearable={false}
-                    options={distances.map(r => ({ value: r, label: r}))}
-                    onChange={(selected) => onChangeDistance(selected?.value)}
-                />
-            </FormGroup>
-        </div>
-    );
-};
 
 const tabs = [
     {
@@ -206,6 +180,7 @@ const Dock = ({showDock, onCloseDock, ...props}) => {
         <ResponsivePanel
             dock
             containerId="longitudinal-profile-container"
+            containerClassName={props.maximized ? "maximized" : null}
             containerStyle={props.dockStyle}
             bsStyle="primary"
             position="right"

@@ -80,6 +80,7 @@ export default {
             })),
         {
             onCloseDock: closeDock,
+            onToggleParameters: setControlProperty.bind(this, "longitudinalProfileParameters", "enabled", true, true),
             onChangeReferential: changeReferential,
             onChangeDistance: changeDistance,
             onToggleSourceMode: toggleMode,

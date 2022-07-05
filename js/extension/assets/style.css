@@ -13,7 +13,7 @@
     content: url('data:image/svg+xml;charset=UTF-8, <svg version="1.1" viewBox="0 -240 1200 1200" xmlns="http://www.w3.org/2000/svg"> <g fill="none" stroke="%23424424"> <g stroke-width="60"> <path d="M187.875,588.81a66.365,66.365 0 1,0 132.73,0a66.365,66.365 0 1,0 -132.73,0"/> <path d="M490.41499999999996,265.93a66.365,66.365 0 1,0 132.73,0a66.365,66.365 0 1,0 -132.73,0"/> <path d="M902.275,118.47a66.365,66.365 0 1,0 132.73,0a66.365,66.365 0 1,0 -132.73,0"/> <path d="M706.515,448.98a66.365,66.365 0 1,0 132.73,0a66.365,66.365 0 1,0 -132.73,0"/> <path d="m284.75 548.14 223.73-236.44"/> <path d="m607.63 306.61 114.41 96.61"/> <path d="m811.02 393.05 127.12-218.64"/> </g> </g> </svg>');
 }
 
-#longitudinal-profile-container {
+#longitudinal-profile-container.maximized {
     z-index: 1300;
 }
 
@@ -45,7 +45,7 @@
 }
 
 #dock-chart-portal {
-    width: 100%;
+    width: 100vw;
     height: 100%;
     z-index: 1200;
     position: absolute;
