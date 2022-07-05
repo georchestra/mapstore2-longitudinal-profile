@@ -11,6 +11,7 @@ import Chart from "@js/extension/components/Chart";
 import Button from "@mapstore/components/misc/Button";
 import Loader from "@mapstore/components/misc/Loader";
 import Toolbar from "@mapstore/components/misc/toolbar/Toolbar";
+import ContainerDimensions from 'react-container-dimensions';
 
 const NavItemT = tooltip(NavItem);
 
@@ -32,8 +33,6 @@ const ChartData = ({ points, messages, loading, maximized, toggleMaximize, bound
         legend: false,
         tooltip: false,
         cartesian: true,
-        width: maximized ? window.innerWidth - 30 - (dockStyle?.right ?? 0) - (dockStyle?.left ?? 0) : 520,
-        height: maximized ? window.innerHeight - 115 : 400,
         popup: false,
         xAxisOpts: {
             hide: false,
@@ -71,7 +70,15 @@ const ChartData = ({ points, messages, loading, maximized, toggleMaximize, bound
                     ]}
                 >
                 </Toolbar>
-                <Chart {...options} data={data} series={series} xAxis={xAxis} />
+                <ContainerDimensions>
+                    {({ width, height }) => (
+                        <Chart
+                            {...options}
+                            height={maximized ? height - 115 : 400}
+                            width={maximized ? width - (dockStyle?.right ?? 0) - (dockStyle?.left ?? 0) : 520 }
+                            data={data} series={series} xAxis={xAxis} />
+                    )}
+                </ContainerDimensions>
                 {
                     data.length ? (
                         <ButtonGroup>
