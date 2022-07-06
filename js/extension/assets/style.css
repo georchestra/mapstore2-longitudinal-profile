@@ -59,6 +59,10 @@
     background: white;
 }
 
+.stats-entry {
+    padding: 5px 0;
+}
+
 .stats-value {
     padding-left: 10px;
 }
