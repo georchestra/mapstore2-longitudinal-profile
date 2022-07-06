@@ -254,7 +254,7 @@ export const longitudinalMapLayout = (action$, store) =>
  * @param store
  * @returns {Observable<unknown>}
  */
-export const resetLongitudinalToolOnDrawToolActive = (action$, store) => shutdownToolOnAnotherToolDrawing(action$, store, 'longitudinal',
+export const resetLongitudinalToolOnDrawToolActive = (action$, store) => shutdownToolOnAnotherToolDrawing(action$, store, CONTROL_NAME,
     () => {
         return Rx.Observable.of(toggleMode());
     },
