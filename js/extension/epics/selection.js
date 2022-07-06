@@ -1,13 +1,20 @@
-import Rx from 'rxjs';
+/*
+ * Copyright 2022, GeoSolutions Sas.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+*/
 
+import Rx from 'rxjs';
 import {CLICK_ON_MAP} from "@mapstore/actions/map";
+import {warning} from "@mapstore/actions/notifications";
 import {isListeningClick, isSupportedLayer} from "@js/extension/selectors";
 import {getSelectedLayer} from "@mapstore/selectors/layers";
-import {buildIdentifyRequest} from "@mapstore/utils/MapInfoUtils";
-import {warning} from "@mapstore/actions/notifications";
 import {mapSelector} from "@mapstore/selectors/map";
+import {buildIdentifyRequest} from "@mapstore/utils/MapInfoUtils";
 import {getFeatureInfo} from "@mapstore/api/identify";
-import {changeGeometry} from "@js/extension/actions/longitude";
+import {changeGeometry} from "@js/extension/actions/longitudinal";
 import {findLineFeature} from "@js/extension/utils/geojson";
 
 export const clickToProfile = (action$, {getState}) =>

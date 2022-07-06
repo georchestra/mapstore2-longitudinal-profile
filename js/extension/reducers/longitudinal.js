@@ -1,3 +1,11 @@
+/*
+ * Copyright 2022, GeoSolutions Sas.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+*/
+
 import {
     ADD_PROFILE_DATA,
     LOADING,
@@ -6,17 +14,17 @@ import {
     CHANGE_DISTANCE,
     INITIALIZED, CHANGE_GEOMETRY, TEAR_DOWN,
     SETUP, TOGGLE_MAXIMIZE
-} from "@js/extension/actions/longitude";
+} from "@js/extension/actions/longitudinal";
 
 const DEFAULT_STATE = {
     initialized: false,
-    infos: false,
-    points: false,
-    mode: false,
     loading: false,
+    mode: false,
     referential: false,
     distance: false,
     geometry: false,
+    infos: false,
+    points: false,
     maximized: false
 };
 
@@ -25,12 +33,17 @@ const DEFAULT_STATE = {
  * The shape of the state is the following:
  * ```
  * {
+ *     initialized: true | false // flag to check whether extension is initialized successfully
  *     loading: true | false // general loading flag
+ *     mode: "draw" | "select" | "import" | false // active tool
+ *     referential: string | false // currently active referential (layer) used to obtain data for building of a profile
+ *     distance: number | false // currently active distance (resolution) used as a setting in data requests
+ *     geometry: object // geometry object, it is used as parameter in data requests and to render line on the map
  *     points: [
  *         []
- *     ],
- *     infos: {},
- *     ...
+ *     ] // array of data points, part of the response from WPS process, used to build chart
+ *     infos: {} // object with stats info for the last data request, used to build stats tab,
+ *     maximized: true | false // flag to determine whether chart is maximized or not
  * }
  * ```
  *

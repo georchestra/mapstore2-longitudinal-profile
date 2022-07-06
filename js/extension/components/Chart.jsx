@@ -1,10 +1,10 @@
 /*
- * Copyright 2020, GeoSolutions Sas.
+ * Copyright 2022, GeoSolutions Sas.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
- */
+*/
 
 import React, { Suspense } from 'react';
 import LoadingView from '@mapstore/components/misc/LoadingView';
@@ -13,8 +13,8 @@ const Plot = React.lazy(() => import('@mapstore/components/charts/PlotlyChart'))
 
 
 /**
- * Plotly base component. Wraps the Plotly chart to fit the widgets chart options
- * format. This conversion should be maintained to keep the chart saved working.
+ * Plotly chart component. This is a slightly modified version of @mapstore/components/charts/WidgetChart
+ * with support of displaying axis labels
  * @prop {string} type one of 'line', 'bar', 'pie'
  * @prop {number} height height for the chart, can be the height of the container div
  * @prop {number} width width for the chart, can be the width of the container div
@@ -33,7 +33,8 @@ const Plot = React.lazy(() => import('@mapstore/components/charts/PlotlyChart'))
  * @prop {string} [yAxisOpts.tickPrefix] the prefix on y value
  * @prop {string} [yAxisOpts.tickSuffix] the suffix of y value.
  * @prop {string} [formula] a formula to calculate the final value
- * @prop {string} [yAxisLabel] the label of yAxis, to show in the legend
+ * @prop {string} [yAxisLabel] the label of yAxis, to show in the legend and aside of the axis
+ * @prop {string} [xAxisLabel] the label of xAxis, to show underneath the axis
  * @prop {boolean} [cartesian] show the cartesian grid behind the chart
  * @prop {object} [autoColorOptions] options to generate the colors of the chart.
  * @prop {object[]} series descriptor for every series. Contains the y axis (or value) `dataKey`

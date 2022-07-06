@@ -1,42 +1,49 @@
+/*
+ * Copyright 2022, GeoSolutions Sas.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+*/
+
 import Rx from 'rxjs';
+import {get, omit} from "lodash";
 import turfCenter from '@turf/center';
 
-import {SET_CONTROL_PROPERTY, setControlProperty} from "@mapstore/actions/controls";
 import {
-    configSelector,
-    dataSourceMode,
-    geometrySelector,
-    isDockOpen,
-    isMaximized
+    configSelector, dataSourceMode, geometrySelector,
+    isDockOpen, isMaximized
 } from "@js/extension/selectors";
 import {
-    CONTROL_DOCK_NAME,
-    CONTROL_NAME,
-    CONTROL_PROPERTIES_NAME, LONGITUDINAL_OWNER,
-    LONGITUDINAL_VECTOR_LAYER_ID
+    CONTROL_DOCK_NAME, CONTROL_NAME, CONTROL_PROPERTIES_NAME,
+    LONGITUDINAL_OWNER, LONGITUDINAL_VECTOR_LAYER_ID
 } from "@js/extension/constants";
+
+import {SET_CONTROL_PROPERTY, setControlProperty} from "@mapstore/actions/controls";
 import {changeDrawingStatus, END_DRAWING} from "@mapstore/actions/draw";
 import {
     addProfileData, changeDistance, changeReferential, initialized,
-    loading,
-    openDock, SETUP,
-    TEAR_DOWN,
-    TOGGLE_MODE,
-    CHANGE_GEOMETRY, CHANGE_DISTANCE, CHANGE_REFERENTIAL, changeGeometry, toggleMaximize
-} from "@js/extension/actions/longitude";
+    loading, openDock, changeGeometry, toggleMaximize, toggleMode,
+    SETUP, TEAR_DOWN, TOGGLE_MODE,
+    CHANGE_GEOMETRY, CHANGE_DISTANCE, CHANGE_REFERENTIAL
+} from "@js/extension/actions/longitudinal";
+import {styleFeatures} from "@js/extension/utils/geojson";
+
 import executeProcess, {makeOutputsExtractor} from "@mapstore/observables/wps/execute";
 import {profileEnLong} from "@js/extension/observables/wps/profile";
 import {wrapStartStop} from "@mapstore/observables/epics";
+
 import {error} from "@mapstore/actions/notifications";
 import {UPDATE_MAP_LAYOUT, updateDockPanelsList, updateMapLayout} from "@mapstore/actions/maplayout";
-import {highlightStyleSelector, mapInfoEnabledSelector} from "@mapstore/selectors/mapInfo";
-import {toggleMapInfoState} from "@mapstore/actions/mapInfo";
 import {changeMapView, registerEventListener, unRegisterEventListener} from "@mapstore/actions/map";
-import {get, omit} from "lodash";
 import {removeAdditionalLayer, updateAdditionalLayer} from "@mapstore/actions/additionallayers";
-import {styleFeatures} from "@js/extension/utils/geojson";
-import {reprojectGeoJson} from "@mapstore/utils/CoordinatesUtils";
+import {toggleMapInfoState} from "@mapstore/actions/mapInfo";
+
+import {highlightStyleSelector, mapInfoEnabledSelector} from "@mapstore/selectors/mapInfo";
 import {mapSelector} from "@mapstore/selectors/map";
+
+import {reprojectGeoJson} from "@mapstore/utils/CoordinatesUtils";
+import {shutdownToolOnAnotherToolDrawing} from "@mapstore/utils/ControlUtils";
 
 const OFFSET = 550;
 
@@ -47,6 +54,11 @@ const DEACTIVATE_ACTIONS = [
 
 const deactivate = () => Rx.Observable.from(DEACTIVATE_ACTIONS);
 
+/**
+ * Ensure that default configuration is applied whenever plugin is initialized
+ * @param action$
+ * @returns {*}
+ */
 export const setupLongitudinalExtension = (action$) =>
     action$.ofType(SETUP)
         .switchMap(({config: { referentiels, distances, defaultDistance, defaultReferentiel }}) => {
@@ -73,6 +85,11 @@ export const setupLongitudinalExtension = (action$) =>
             return Rx.Observable.of(error({ title: "Error", message: "Unable to setup longitudinal profile extension" }));
         });
 
+/**
+ * Clean up state related to the plugin whenever it tears down
+ * @param action$
+ * @returns {*}
+ */
 export const cleanOnTearDown = (action$) =>
     action$.ofType(TEAR_DOWN)
         .switchMap(() => {
@@ -86,6 +103,12 @@ export const cleanOnTearDown = (action$) =>
             );
         });
 
+/**
+ * Adds support of drawing/selecting line whenever corresponding tools is activated via menu
+ * @param action$
+ * @param store
+ * @returns {*}
+ */
 export const onDrawActivated = (action$, store) =>
     action$.ofType(TOGGLE_MODE)
         .switchMap(()=> {
@@ -120,6 +143,12 @@ export const onDrawActivated = (action$, store) =>
             }
         });
 
+/**
+ * Reload chart data from WPS whenever geometry or request configuration changed
+ * @param action$
+ * @param store
+ * @returns {*}
+ */
 export const onChartPropsChange = (action$, store) =>
     action$.ofType(CHANGE_GEOMETRY, CHANGE_DISTANCE, CHANGE_REFERENTIAL)
         .filter(() => {
@@ -218,3 +247,16 @@ export const longitudinalMapLayout = (action$, store) =>
             });
             return { ...action, source: CONTROL_NAME }; // add an argument to avoid infinite loop.
         });
+
+/**
+ * Toggle longitudinal profile drawing/selection tool off when one of the drawing tools takes control
+ * @param action$
+ * @param store
+ * @returns {Observable<unknown>}
+ */
+export const resetLongitudinalToolOnDrawToolActive = (action$, store) => shutdownToolOnAnotherToolDrawing(action$, store, 'longitudinal',
+    () => {
+        return Rx.Observable.of(toggleMode());
+    },
+    () => dataSourceMode(store.getState())
+);

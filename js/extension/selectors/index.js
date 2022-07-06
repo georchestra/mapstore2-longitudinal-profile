@@ -1,3 +1,11 @@
+/*
+ * Copyright 2022, GeoSolutions Sas.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+*/
+
 import {CONTROL_DOCK_NAME, CONTROL_NAME, CONTROL_PROPERTIES_NAME} from "@js/extension/constants";
 import {getSelectedLayer} from "@mapstore/selectors/layers";
 import {mapSelector} from "@mapstore/selectors/map";

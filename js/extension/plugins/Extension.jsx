@@ -1,12 +1,20 @@
+/*
+ * Copyright 2022, GeoSolutions Sas.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+*/
+
 import {connect} from "react-redux";
 import { createSelector } from 'reselect';
 
 import { name } from '../../../config';
 
-import Main from "../components/Main";
+import Main from "@js/extension/components/Main";
 import Menu from "@js/extension/components/Menu";
 
-import { setControlProperty } from "@mapstore/actions/controls";
+import * as epics from '@js/extension/epics';
 import {
     dataSourceMode, distanceSelector,
     infosSelector,
@@ -17,9 +25,7 @@ import {
     isMaximized
 } from "@js/extension/selectors";
 
-import * as epics from '@js/extension/epics';
 import longitudinal from '@js/extension/reducers/longitudinal';
-import '../assets/style.css';
 import {
     closeDock,
     setup,
@@ -29,12 +35,17 @@ import {
     changeDistance,
     changeGeometry,
     toggleMaximize
-} from "@js/extension/actions/longitude";
+} from "@js/extension/actions/longitudinal";
+
+import { setControlProperty } from "@mapstore/actions/controls";
 import { warning } from '@mapstore/actions/notifications';
+import {exportCSV} from "@mapstore/actions/widgets";
+
 import {boundingSidebarRectSelector, mapLayoutValuesSelector} from "@mapstore/selectors/maplayout";
 import {currentLocaleSelector, currentMessagesSelector} from "@mapstore/selectors/locale";
-import {exportCSV} from "@mapstore/actions/widgets";
 import {getSelectedLayer} from "@mapstore/selectors/layers";
+
+import '../assets/style.css';
 
 const selector = (state) => ({
     initialized: isInitialized(state),

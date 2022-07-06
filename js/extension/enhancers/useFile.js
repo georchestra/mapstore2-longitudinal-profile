@@ -1,11 +1,17 @@
+/*
+ * Copyright 2022, GeoSolutions Sas.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+*/
 
 import { compose, mapPropsStream, withHandlers } from 'recompose';
 import {findLineFeature} from "@js/extension/utils/geojson";
 
 /**
- * Enhancer for processing map configuration and layers object
- * Recognizes if the file dropped is a map or a layer
- * Flatten features and then selects first line feature to build profile out of it
+ * Enhancer for processing json file with features
+ * Flatten features and then selects first line feature to build longitudinal profile out of it
  */
 export default compose(
     withHandlers({

@@ -1,5 +1,11 @@
 import {reprojectGeoJson} from "@mapstore/utils/CoordinatesUtils";
 
+/**
+ * Utility function to traverse through json input recursively and build a flat array of features
+ * @param json
+ * @param features
+ * @returns {*[]|*}
+ */
 export const flattenImportedFeatures = (json, features = undefined) => {
     let flatten = [];
     if (typeof features !== 'undefined') {
@@ -23,6 +29,11 @@ export const flattenImportedFeatures = (json, features = undefined) => {
     return flatten;
 };
 
+/**
+ * Finds first line feature in array of features and reprojects geometry for further use in WPS request
+ * @param collection
+ * @returns {{feature: *, coordinates: *, reprojected: (*)}|{feature: undefined, coordinates: undefined, reprojected: undefined}}
+ */
 export const findLineFeature = (collection) => {
     const feature = collection.find((f) => ["LineString", "MultiLineString"].includes(f?.geometry?.type));
     if (feature) {
