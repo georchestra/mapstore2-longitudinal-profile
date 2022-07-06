@@ -32,12 +32,13 @@ export const flattenImportedFeatures = (json, features = undefined) => {
 /**
  * Finds first line feature in array of features and reprojects geometry for further use in WPS request
  * @param collection
+ * @param projection
  * @returns {{feature: *, coordinates: *, reprojected: (*)}|{feature: undefined, coordinates: undefined, reprojected: undefined}}
  */
-export const findLineFeature = (collection) => {
+export const selectLineFeature = (collection, projection = "EPSG:4326") => {
     const feature = collection.find((f) => ["LineString", "MultiLineString"].includes(f?.geometry?.type));
     if (feature) {
-        const reprojected = reprojectGeoJson(feature, "EPSG:4326", "EPSG:3857");
+        const reprojected = projection !== "EPSG:3857" ? reprojectGeoJson(feature, projection, "EPSG:3857") : feature;
         const coordinates = reprojected.geometry.type === "MultiLineString" ? reprojected.geometry.coordinates[0] : reprojected.geometry.coordinates;
         return { feature, reprojected, coordinates };
     }

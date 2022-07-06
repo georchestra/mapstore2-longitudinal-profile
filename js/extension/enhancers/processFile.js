@@ -17,6 +17,7 @@ import {
     recognizeExt
 } from '@mapstore/utils/FileUtils';
 import {flattenImportedFeatures} from "@js/extension/utils/geojson";
+import {parseURN} from "@mapstore/utils/CoordinatesUtils";
 
 
 /**
@@ -43,7 +44,7 @@ const readFile = () => (file) => {
     const supportedProjections = (projectionDefs.length && projectionDefs.map(({code})  => code) || []).concat(["EPSG:4326", "EPSG:3857", "EPSG:900913"]);
     if (type === 'application/json') {
         return readJson(file).then(f => {
-            const projection = get(f, 'map.projection');
+            const projection = get(f, 'map.projection') ?? parseURN(get(f, 'crs'));
             if (projection) {
                 if (supportedProjections.includes(projection)) {
                     return [{...f, "fileName": file.name}];
@@ -75,7 +76,7 @@ export default compose(
                             return ({
                                 loading: false,
                                 flattenFeatures: flattenImportedFeatures(res),
-                                crs: 'EPSG:4326'
+                                crs: res[0]?.crs?.properties?.name ?? 'EPSG:4326'
                             });
                         })
                         .catch(error => Rx.Observable.of({error, loading: false}))

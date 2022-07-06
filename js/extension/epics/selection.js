@@ -15,7 +15,7 @@ import {mapSelector} from "@mapstore/selectors/map";
 import {buildIdentifyRequest} from "@mapstore/utils/MapInfoUtils";
 import {getFeatureInfo} from "@mapstore/api/identify";
 import {changeGeometry} from "@js/extension/actions/longitudinal";
-import {findLineFeature} from "@js/extension/utils/geojson";
+import {selectLineFeature} from "@js/extension/utils/geojson";
 
 export const clickToProfile = (action$, {getState}) =>
     action$
@@ -52,7 +52,7 @@ export const clickToProfile = (action$, {getState}) =>
             if (url) {
                 return getFeatureInfo(basePath, param, layer, {attachJSON: true})
                     .map(data => {
-                        const { feature, coordinates } = findLineFeature(data?.features ?? []);
+                        const { feature, coordinates } = selectLineFeature(data?.features ?? [], data?.featuresCrs);
                         if (feature && coordinates) {
                             return changeGeometry({
                                 type: "LineString",
@@ -75,7 +75,7 @@ export const clickToProfile = (action$, {getState}) =>
             }
 
             const intersected = (point?.intersectedFeatures ?? []).find(l => l.id === layer.id);
-            const { feature, coordinates } = findLineFeature(intersected?.features ?? []);
+            const { feature, coordinates } = selectLineFeature(intersected?.features ?? []);
             if (feature && coordinates) {
                 return Rx.Observable.of(changeGeometry({
                     type: "LineString",

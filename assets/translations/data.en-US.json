@@ -21,6 +21,9 @@
             },
             "elevation": "Elevation (m)",
             "distance": "Distance (m)",
+            "chart": "Chart",
+            "infos": "Information",
+            "preferences": "Preferences",
           "settings": {
             "referential": "Referential",
             "distance": "Distance"

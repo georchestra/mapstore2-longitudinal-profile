@@ -7,7 +7,7 @@
 */
 
 import { compose, mapPropsStream, withHandlers } from 'recompose';
-import {findLineFeature} from "@js/extension/utils/geojson";
+import {selectLineFeature} from "@js/extension/utils/geojson";
 
 /**
  * Enhancer for processing json file with features
@@ -17,7 +17,7 @@ export default compose(
     withHandlers({
         useFlattenFeatures: ({ onClose = () => {}, changeGeometry = () => {}, warning = () => {}}) =>
             (flattenFeatures, crs) => {
-                const { feature, coordinates } = findLineFeature(flattenFeatures, crs);
+                const { feature, coordinates } = selectLineFeature(flattenFeatures, crs);
                 if (feature && coordinates) {
                     changeGeometry({
                         type: "LineString",
