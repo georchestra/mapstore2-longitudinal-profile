@@ -8,14 +8,15 @@
 
 import Rx from 'rxjs';
 import {CLICK_ON_MAP} from "@mapstore/actions/map";
-import {warning} from "@mapstore/actions/notifications";
+import {error, warning} from "@mapstore/actions/notifications";
 import {isListeningClick, isSupportedLayer} from "@js/extension/selectors";
 import {getSelectedLayer} from "@mapstore/selectors/layers";
 import {mapSelector} from "@mapstore/selectors/map";
 import {buildIdentifyRequest} from "@mapstore/utils/MapInfoUtils";
 import {getFeatureInfo} from "@mapstore/api/identify";
-import {changeGeometry} from "@js/extension/actions/longitudinal";
+import {changeGeometry, loading} from "@js/extension/actions/longitudinal";
 import {selectLineFeature} from "@js/extension/utils/geojson";
+import {wrapStartStop} from "@mapstore/observables/epics";
 
 export const clickToProfile = (action$, {getState}) =>
     action$
@@ -70,8 +71,19 @@ export const clickToProfile = (action$, {getState}) =>
                     .catch(e => {
                         console.log("Error while obtaining data for longitudinal profile"); // eslint-disable-line no-console
                         console.log(e); // eslint-disable-line no-console
-                        return Rx.Observable.empty();
-                    });
+                        return Rx.Observable.of(loading(false));
+                    })
+                    .let(wrapStartStop(
+                        [loading(true)],
+                        [],
+                        () => Rx.Observable.of(error({
+                            title: "notification.error",
+                            message: "error loading data for longitudinal profile",
+                            autoDismiss: 6,
+                            position: "tc"
+                        }),
+                        loading(false))
+                    ));
             }
 
             const intersected = (point?.intersectedFeatures ?? []).find(l => l.id === layer.id);

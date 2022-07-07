@@ -13,8 +13,10 @@ import { name } from '../../../config';
 
 import Main from "@js/extension/components/Main";
 import Menu from "@js/extension/components/Menu";
+import GlobalSpinner from "@mapstore/components/misc/spinners/GlobalSpinner/GlobalSpinner";
 
 import * as epics from '@js/extension/epics';
+
 import {
     dataSourceMode, distanceSelector,
     infosSelector,
@@ -22,10 +24,10 @@ import {
     isDockOpen, isInitialized,
     isParametersOpen, isSupportedLayer,
     pointsSelector, referentialSelector,
-    isMaximized
+    isMaximized, isLoading
 } from "@js/extension/selectors";
-
 import longitudinal from '@js/extension/reducers/longitudinal';
+
 import {
     closeDock,
     setup,
@@ -36,15 +38,14 @@ import {
     changeGeometry,
     toggleMaximize
 } from "@js/extension/actions/longitudinal";
-
 import { setControlProperty } from "@mapstore/actions/controls";
 import { warning } from '@mapstore/actions/notifications';
-import {exportCSV} from "@mapstore/actions/widgets";
 
+import {exportCSV} from "@mapstore/actions/widgets";
 import {boundingSidebarRectSelector, mapLayoutValuesSelector} from "@mapstore/selectors/maplayout";
 import {currentLocaleSelector, currentMessagesSelector} from "@mapstore/selectors/locale";
-import {getSelectedLayer} from "@mapstore/selectors/layers";
 
+import {getSelectedLayer} from "@mapstore/selectors/layers";
 import '../assets/style.css';
 
 const selector = (state) => ({
@@ -113,8 +114,15 @@ export default {
                 }
             }))(LongitudinalNav),
             doNotHide: true,
-            priority: 1,
             position: 1000
+        },
+        Toolbar: {
+            name: "LongitudinalProfile",
+            alwaysVisible: true,
+            position: 1,
+            tool: connect((state) => ({
+                loading: isLoading(state)
+            }))(GlobalSpinner)
         }
     },
     epics,

@@ -12,6 +12,7 @@ import {mapSelector} from "@mapstore/selectors/map";
 import {get} from "lodash";
 
 export const isInitialized = (state) => state?.longitudinal?.initialized;
+export const isLoading = (state) => state?.longitudinal?.loading;
 
 export const dataSourceMode = (state) => state?.longitudinal?.mode;
 export const geometrySelector = (state) => state?.longitudinal?.geometry;

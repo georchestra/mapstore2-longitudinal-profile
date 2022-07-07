@@ -1,5 +1,5 @@
 {
-    "name": "longitutdinal_profile",
+    "name": "LongitudinalProfile",
     "version": "1.0.0",
     "description": "Tool to build longitudinal profile using drawn, selected or imported line feature",
     "main": "index.js",
