@@ -7,10 +7,10 @@
 */
 
 import {get} from 'lodash';
+import proj4 from 'proj4';
 import { compose, createEventHandler, mapPropsStream } from 'recompose';
 import Rx from 'rxjs';
 
-import ConfigUtils from '@mapstore/utils/ConfigUtils';
 import {
     MIME_LOOKUPS,
     readJson,
@@ -40,13 +40,12 @@ const checkFileType = (file) => {
 const readFile = () => (file) => {
     const ext = recognizeExt(file.name);
     const type = file.type || MIME_LOOKUPS[ext];
-    const projectionDefs = ConfigUtils.getConfigProp('projectionDefs') || [];
-    const supportedProjections = (projectionDefs.length && projectionDefs.map(({code})  => code) || []).concat(["EPSG:4326", "EPSG:3857", "EPSG:900913"]);
     if (type === 'application/json') {
         return readJson(file).then(f => {
             const projection = get(f, 'map.projection') ?? parseURN(get(f, 'crs'));
             if (projection) {
-                if (supportedProjections.includes(projection)) {
+                const supportedProjection = proj4.defs(projection);
+                if (supportedProjection) {
                     return [{...f, "fileName": file.name}];
                 }
                 throw new Error("PROJECTION_NOT_SUPPORTED");

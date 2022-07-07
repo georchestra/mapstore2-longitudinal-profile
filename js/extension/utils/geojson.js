@@ -1,4 +1,4 @@
-import {reprojectGeoJson} from "@mapstore/utils/CoordinatesUtils";
+import {parseURN, reprojectGeoJson} from "@mapstore/utils/CoordinatesUtils";
 
 /**
  * Utility function to traverse through json input recursively and build a flat array of features
@@ -36,9 +36,10 @@ export const flattenImportedFeatures = (json, features = undefined) => {
  * @returns {{feature: *, coordinates: *, reprojected: (*)}|{feature: undefined, coordinates: undefined, reprojected: undefined}}
  */
 export const selectLineFeature = (collection, projection = "EPSG:4326") => {
+    const parsedProjectionName = parseURN(projection);
     const feature = collection.find((f) => ["LineString", "MultiLineString"].includes(f?.geometry?.type));
     if (feature) {
-        const reprojected = projection !== "EPSG:3857" ? reprojectGeoJson(feature, projection, "EPSG:3857") : feature;
+        const reprojected = parsedProjectionName !== "EPSG:3857" ? reprojectGeoJson(feature, parsedProjectionName, "EPSG:3857") : feature;
         const coordinates = reprojected.geometry.type === "MultiLineString" ? reprojected.geometry.coordinates[0] : reprojected.geometry.coordinates;
         return { feature, reprojected, coordinates };
     }

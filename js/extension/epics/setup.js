@@ -9,6 +9,8 @@
 import Rx from 'rxjs';
 import {get, omit} from "lodash";
 import turfCenter from '@turf/center';
+import turfBbox from '@turf/bbox';
+import proj4 from 'proj4';
 
 import {
     configSelector, dataSourceMode, geometrySelector,
@@ -44,6 +46,7 @@ import {mapSelector} from "@mapstore/selectors/map";
 
 import {reprojectGeoJson} from "@mapstore/utils/CoordinatesUtils";
 import {shutdownToolOnAnotherToolDrawing} from "@mapstore/utils/ControlUtils";
+import {localConfigSelector} from "@mapstore/selectors/localConfig";
 
 const OFFSET = 550;
 
@@ -57,11 +60,21 @@ const deactivate = () => Rx.Observable.from(DEACTIVATE_ACTIONS);
 /**
  * Ensure that default configuration is applied whenever plugin is initialized
  * @param action$
+ * @param store
  * @returns {*}
  */
-export const setupLongitudinalExtension = (action$) =>
+export const setupLongitudinalExtension = (action$, store) =>
     action$.ofType(SETUP)
         .switchMap(({config: { referentiels, distances, defaultDistance, defaultReferentiel }}) => {
+            const state = store.getState();
+            // adds projections from localConfig.json
+            // Extension do not see the state proj4 of MapStore (can not reproject in custom CRS as mapstore does)
+            // so projections have to be registered again in the extension.
+            const {projectionDefs = []} = localConfigSelector(state) ?? {};
+            projectionDefs.forEach((proj) => {
+                proj4.defs(proj.code, proj.def);
+            });
+
             return Rx.Observable.of(
                 updateDockPanelsList(CONTROL_DOCK_NAME, "add", "right"),
                 changeReferential(defaultReferentiel ?? referentiels[0].layerName),
@@ -171,6 +184,8 @@ export const onChartPropsChange = (action$, store) =>
                     };
                     const map = mapSelector(state);
                     const center = turfCenter(reprojectGeoJson(feature, geometry.projection, 'EPSG:4326')).geometry.coordinates;
+                    const bbox = turfBbox(reprojectGeoJson(feature, geometry.projection, 'EPSG:4326'));
+                    const [minx, minY, maxX, maxY] = bbox;
                     const { infos, points } = result?.profile ?? {};
                     const styledFeatures = styleFeatures([feature], omit(highlightStyleSelector(state), ["radius"]));
                     const features = styledFeatures && geometry.projection ? styledFeatures.map( f => reprojectGeoJson(
@@ -189,7 +204,7 @@ export const onChartPropsChange = (action$, store) =>
                                 name: "selectedLine",
                                 visibility: true
                             }),
-                        changeMapView({x: center[0], y: center[1]}, map.zoom, map.bbox, map.size, null, map.projection),
+                        changeMapView({x: center[0], y: center[1]}, map.zoom, [minx, minY, maxX, maxY], map.size, null, map.projection),
                         addProfileData(infos, points)
                     ]) : Rx.Observable.empty();
                 })
