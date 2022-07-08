@@ -75,7 +75,7 @@ export const clickToProfile = (action$, {getState}) =>
                     })
                     .let(wrapStartStop(
                         [loading(true)],
-                        [],
+                        [loading(false)],
                         () => Rx.Observable.of(error({
                             title: "notification.error",
                             message: "error loading data for longitudinal profile",
