@@ -13,7 +13,8 @@ export {
     longitudinalMapLayout,
     onChartPropsChange,
     onDockClosed,
-    resetLongitudinalToolOnDrawToolActive
+    resetLongitudinalToolOnDrawToolActive,
+    deactivateOnIdentifyEnabledEpic
 } from './setup';
 
 export {

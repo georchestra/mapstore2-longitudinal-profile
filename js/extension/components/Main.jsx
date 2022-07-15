@@ -24,8 +24,8 @@ const Extension = ({initialized, dataSourceMode, tearDown, setup, onToggleSource
     return initialized ? [
         <HelpInfo style={props.helpStyle} key="help" dataSourceMode={dataSourceMode} {...props} />,
         <Dock key="profile-data" {...props} />,
-        <ImportDialog show={dataSourceMode === 'import'} onClose={() => onToggleSourceMode("import")} {...props} />,
-        <SettingsPanel {...props} panelStyle={{width: '330px'}} />
+        <SettingsPanel {...props} panelStyle={{width: '330px'}} />,
+        (dataSourceMode === 'import' ? [<ImportDialog show={dataSourceMode === 'import'} onClose={() => onToggleSourceMode("import")} {...props} />] : [])
     ] : false;
 };
 

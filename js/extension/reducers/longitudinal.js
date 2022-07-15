@@ -20,12 +20,11 @@ const DEFAULT_STATE = {
     initialized: false,
     loading: false,
     mode: false,
-    referential: false,
-    distance: false,
     geometry: false,
     infos: false,
     points: false,
-    maximized: false
+    maximized: false,
+    config: {}
 };
 
 /**
@@ -44,6 +43,7 @@ const DEFAULT_STATE = {
  *     ] // array of data points, part of the response from WPS process, used to build chart
  *     infos: {} // object with stats info for the last data request, used to build stats tab,
  *     maximized: true | false // flag to determine whether chart is maximized or not
+ *     config: object // object containing configuration of plugin
  * }
  * ```
  *

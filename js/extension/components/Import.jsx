@@ -26,10 +26,10 @@ export default compose(
         onRef = () => {},
         show,
         ...props
-    }) => show ? <DragZone
+    }) => <DragZone
         onClose={onClose}
         onDrop={onDrop}
         onRef={onRef}
     >
         <Content {...props} />
-    </DragZone> : null);
+    </DragZone>);

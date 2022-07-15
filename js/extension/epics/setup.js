@@ -39,7 +39,12 @@ import {error} from "@mapstore/actions/notifications";
 import {UPDATE_MAP_LAYOUT, updateDockPanelsList, updateMapLayout} from "@mapstore/actions/maplayout";
 import {changeMapView, registerEventListener, unRegisterEventListener} from "@mapstore/actions/map";
 import {removeAdditionalLayer, updateAdditionalLayer} from "@mapstore/actions/additionallayers";
-import {toggleMapInfoState} from "@mapstore/actions/mapInfo";
+import {
+    changeMapInfoState,
+    hideMapinfoMarker,
+    purgeMapInfoResults, TOGGLE_MAPINFO_STATE,
+    toggleMapInfoState
+} from "@mapstore/actions/mapInfo";
 
 import {highlightStyleSelector, mapInfoEnabledSelector} from "@mapstore/selectors/mapInfo";
 import {mapSelector} from "@mapstore/selectors/map";
@@ -137,19 +142,26 @@ export const onDrawActivated = (action$, store) =>
                                 Rx.Observable.of(startDrawingAction).delay(200) // reactivate drawing
                             );
                     })
-                    .startWith(startDrawingAction)
+                    .startWith(
+                        unRegisterEventListener('click', CONTROL_NAME),
+                        changeMapInfoState(false),
+                        purgeMapInfoResults(), hideMapinfoMarker(),
+                        startDrawingAction
+                    )
                     .takeUntil(action$.filter(({ type }) =>
                         type === TOGGLE_MODE && dataSourceMode(store.getState()) !== 'draw'
                     ))
                     .concat(deactivate());
             case "select":
                 return Rx.Observable.from([
+                    purgeMapInfoResults(), hideMapinfoMarker(),
                     ...(get(store.getState(), 'draw.drawOwner', '') === CONTROL_NAME ? DEACTIVATE_ACTIONS : []),
                     registerEventListener('click', CONTROL_NAME),
                     ...(mapInfoEnabledSelector(state) ? [toggleMapInfoState()] : [])
                 ]);
             default:
                 return Rx.Observable.from([
+                    purgeMapInfoResults(), hideMapinfoMarker(),
                     ...(get(store.getState(), 'draw.drawOwner', '') === CONTROL_NAME ? DEACTIVATE_ACTIONS : []),
                     unRegisterEventListener('click', CONTROL_NAME)
                 ]);
@@ -275,3 +287,22 @@ export const resetLongitudinalToolOnDrawToolActive = (action$, store) => shutdow
     },
     () => dataSourceMode(store.getState())
 );
+
+/**
+ * Ensures that the active tool is getting deactivated when Identify tool is activated
+ * @param {observable} action$ manages `TOGGLE_MAPINFO_STATE`
+ * @param store
+ * @return {observable}
+ */
+export const deactivateOnIdentifyEnabledEpic = (action$, store) =>
+    action$
+        .ofType(TOGGLE_MAPINFO_STATE)
+        .filter(() => mapInfoEnabledSelector(store.getState()))
+        .switchMap(() => {
+            const mode = dataSourceMode(store.getState());
+            return mode
+                ? Rx.Observable.from([
+                    toggleMode(false)
+                ])
+                : Rx.Observable.empty();
+        });
