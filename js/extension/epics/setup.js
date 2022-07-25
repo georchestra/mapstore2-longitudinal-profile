@@ -70,7 +70,7 @@ const deactivate = () => Rx.Observable.from(DEACTIVATE_ACTIONS);
  */
 export const setupLongitudinalExtension = (action$, store) =>
     action$.ofType(SETUP)
-        .switchMap(({config: { referentiels, distances, defaultDistance, defaultReferentiel }}) => {
+        .switchMap(({config: { referentiels, distances, defaultDistance, defaultReferentiel } = {}}) => {
             const state = store.getState();
             // adds projections from localConfig.json
             // Extension do not see the state proj4 of MapStore (can not reproject in custom CRS as mapstore does)
@@ -100,7 +100,7 @@ export const setupLongitudinalExtension = (action$, store) =>
         })
         .catch((e) => {
             console.log(e); // eslint-disable-line no-console
-            return Rx.Observable.of(error({ title: "Error", message: "Unable to setup longitudinal profile extension" }));
+            return Rx.Observable.of(error({ title: "Error", message: "longitudinal.errors.unableToSetupPlugin" }));
         });
 
 /**
@@ -230,7 +230,7 @@ export const onChartPropsChange = (action$, store) =>
                     loading(false),
                     () => Rx.Observable.of(error({
                         title: "notification.error",
-                        message: "error loading data for longitudinal profile",
+                        message: "longitudinal.errors.loadingError",
                         autoDismiss: 6,
                         position: "tc"
                     }))

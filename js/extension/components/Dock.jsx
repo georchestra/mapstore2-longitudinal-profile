@@ -20,6 +20,7 @@ import Loader from "@mapstore/components/misc/Loader";
 import Toolbar from "@mapstore/components/misc/toolbar/Toolbar";
 import ContainerDimensions from 'react-container-dimensions';
 import {Properties} from "@js/extension/components/Properties";
+import LoadingView from "@mapstore/components/misc/LoadingView";
 
 const NavItemT = tooltip(NavItem);
 
@@ -54,7 +55,7 @@ const ChartData = ({ points, messages, loading, maximized, toggleMaximize, bound
     };
 
     const content = loading
-        ? <div className="longitudinal-container"><div className="loading"><Loader size={176} /></div></div>
+        ? <LoadingView />
         : (
             <div className="longitudinal-container">
                 <Toolbar

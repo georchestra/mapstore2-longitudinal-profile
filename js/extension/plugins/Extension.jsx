@@ -51,6 +51,7 @@ import '../assets/style.css';
 const selector = (state) => ({
     initialized: isInitialized(state),
     size: 550,
+    loading: isLoading(state),
     dataSourceMode: dataSourceMode(state),
     isParametersOpen: isParametersOpen(state),
     showDock: isDockOpen(state),

@@ -19,6 +19,10 @@
         "noFeatureInPoint": "L'entité linéaire n'a pas été trouvée au point sélectionné.",
         "noLineFeatureFound": "L'élément de ligne n'a pas été trouvé dans le fichier importé."
       },
+      "error": {
+        "loadingError": "Erreur lors du chargement des données pour le profil longitudinal",
+        "unableToSetupPlugin": "Impossible de configurer l'extension du profil longitudinal"
+      },
       "elevation": "Altitude (m)",
       "distance": "Distance (m)",
       "chart": "Graphique",

@@ -19,6 +19,10 @@
               "noFeatureInPoint": "Line feature was not found at selected point.",
               "noLineFeatureFound": "Line feature was not found in imported file."
             },
+            "error": {
+              "loadingError": "Error loading data for longitudinal profile",
+              "unableToSetupPlugin": "Unable to setup longitudinal profile extension"
+            },
             "elevation": "Elevation (m)",
             "distance": "Distance (m)",
             "chart": "Chart",

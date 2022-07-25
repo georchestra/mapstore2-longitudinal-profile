@@ -19,6 +19,10 @@
         "noFeatureInPoint": "L'elemento lineare non è stato trovato nel punto selezionato.",
         "noLineFeatureFound": "\"La caratteristica linea non è stata trovata nel file importato."
       },
+      "error": {
+        "loadingError": "Errore nel caricamento dei dati per il profilo longitudinale",
+        "unableToSetupPlugin": "Impossibile impostare l'estensione del profilo longitudinale"
+      },
       "elevation": "Quota (m)",
       "distance": "Distanza (m)",
       "chart": "Schema",

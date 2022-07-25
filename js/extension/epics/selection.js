@@ -78,7 +78,7 @@ export const clickToProfile = (action$, {getState}) =>
                         [loading(false)],
                         () => Rx.Observable.of(error({
                             title: "notification.error",
-                            message: "error loading data for longitudinal profile",
+                            message: "longitudinal.errors.loadingError",
                             autoDismiss: 6,
                             position: "tc"
                         }),
