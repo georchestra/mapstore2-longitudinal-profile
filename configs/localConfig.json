@@ -278,7 +278,32 @@
             },
             "FeedbackMask"
         ],
-        "desktop": ["Details", "SampleExtension",
+        "desktop": ["Details",
+          {
+            "name": "LongitudinalProfile",
+            "cfg": {
+              "wpsurl": "/geoserver/wps",
+              "identifier": "gs:ProfilEnLong",
+              "referentiels": [
+                {
+                  "layerName": "sfdem",
+                  "title": "sfdem"
+                }
+              ],
+              "distances": [
+                1,
+                5,
+                10,
+                50,
+                100,
+                500,
+                1000,
+                5000
+              ],
+              "defaultDistance": 100,
+              "defaultReferentiel": "sfdem"
+            }
+          },
           {
             "name": "Map",
             "cfg": {
@@ -470,7 +495,7 @@
                 "declineUrl" : "http://www.google.com"
                 }
             },
-            "OmniBar", "Login", "Save", "SaveAs", "BurgerMenu", "Expander", "Undo", "Redo", "FullScreen", "GlobeViewSwitcher", "SearchServicesConfig", "SearchByBookmark", "WidgetsBuilder", "Widgets",
+            "OmniBar", "Login", "Save", "SaveAs", "SidebarMenu", "Expander", "Undo", "Redo", "FullScreen", "GlobeViewSwitcher", "SearchServicesConfig", "SearchByBookmark", "WidgetsBuilder", "Widgets",
             "WidgetsTray",
             "Timeline",
             "Playback",

@@ -1,10 +1,79 @@
-#SAMPLE_EXTENSION {
-    background-color: rgba(255,255,255,.9);
-    border-radius: 10px;
-    max-width: 550px;
-    padding: 10px;
-    margin: 10px;
+.longitudinal-icon {
+    height: 100%;
+    width: 100%;
+}
+
+.btn-primary .longitudinal-icon::after {
+    /*noinspection CssUnknownTarget*/
+    content: url('data:image/svg+xml;charset=UTF-8, <svg version="1.1" viewBox="0 -240 1200 1200" xmlns="http://www.w3.org/2000/svg"> <g fill="none" stroke="%23ffffff"> <g stroke-width="60"> <path d="M187.875,588.81a66.365,66.365 0 1,0 132.73,0a66.365,66.365 0 1,0 -132.73,0"/> <path d="M490.41499999999996,265.93a66.365,66.365 0 1,0 132.73,0a66.365,66.365 0 1,0 -132.73,0"/> <path d="M902.275,118.47a66.365,66.365 0 1,0 132.73,0a66.365,66.365 0 1,0 -132.73,0"/> <path d="M706.515,448.98a66.365,66.365 0 1,0 132.73,0a66.365,66.365 0 1,0 -132.73,0"/> <path d="m284.75 548.14 223.73-236.44"/> <path d="m607.63 306.61 114.41 96.61"/> <path d="m811.02 393.05 127.12-218.64"/> </g> </g> </svg>');
+}
+
+.btn-tray .longitudinal-icon::after {
+    /*noinspection CssUnknownTarget*/
+    content: url('data:image/svg+xml;charset=UTF-8, <svg version="1.1" viewBox="0 -240 1200 1200" xmlns="http://www.w3.org/2000/svg"> <g fill="none" stroke="%23424424"> <g stroke-width="60"> <path d="M187.875,588.81a66.365,66.365 0 1,0 132.73,0a66.365,66.365 0 1,0 -132.73,0"/> <path d="M490.41499999999996,265.93a66.365,66.365 0 1,0 132.73,0a66.365,66.365 0 1,0 -132.73,0"/> <path d="M902.275,118.47a66.365,66.365 0 1,0 132.73,0a66.365,66.365 0 1,0 -132.73,0"/> <path d="M706.515,448.98a66.365,66.365 0 1,0 132.73,0a66.365,66.365 0 1,0 -132.73,0"/> <path d="m284.75 548.14 223.73-236.44"/> <path d="m607.63 306.61 114.41 96.61"/> <path d="m811.02 393.05 127.12-218.64"/> </g> </g> </svg>');
+}
+
+#longitudinal-profile-container.maximized {
+    z-index: 1300;
+}
+
+.longitude-help {
     position: absolute;
-    top: 50px;
-    z-index: 1000;
+    right: 50%;
+    transform: translateX(50%);
+    top: 45px;
+    width: 300px;
+    background: #00000088;
+    color: white;
+    border-radius: 3px;
+    z-index: 1;
+    padding: 10px;
+    opacity: 0.8;
+    pointer-events: none;
+    white-space: pre-line;
+}
+
+.longitudinal-container {
+    padding: 15px;
+    height: 100%;
+}
+
+.longitudinal-container.maximized {
+    position: fixed;
+    background: inherit;
+    z-index: 2000;
+}
+
+#dock-chart-portal {
+    width: 100vw;
+    height: 100%;
+    z-index: 1200;
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+}
+
+#dock-chart-portal.visible {
+    pointer-events: all;
+    background: white;
+}
+
+.stats-entry {
+    padding: 5px 0;
+}
+
+.stats-value {
+    padding-left: 10px;
+}
+
+.longitudinal-import {
+    z-index: 1;
+    position: relative;
+}
+
+.chart-toolbar.btn-group {
+    display: flex;
+    justify-content: right;
+    padding: 0 5px;
 }
