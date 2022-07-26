@@ -24,8 +24,9 @@ The application runs at `http://localhost:8081` afterwards. You will see, openin
 
 ## Plugin configuration
 
-Longitudinal profile plugin allows the user to build profile based on the drawn, selected or imported geometry data corresponding to that geometry, obtained from WPS backend.
-Plugin visualize data via exportable chart and statistics.
+Given a selected digital elevation model, the Longitudinal profile plugin allows the user to generate a longitudinal profile based on the drawn, selected or imported geometry. The longitudinal profile is calculated by a WPS process and retrieved from it.
+
+The plugin allow also to export the profile charts as well as the result of the WPS in CSV format.
 
 #### Local config
 For example the plugin allows configuration of the following properties
