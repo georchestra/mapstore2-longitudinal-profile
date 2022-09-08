@@ -14,7 +14,8 @@ export {
     onChartPropsChange,
     onDockClosed,
     resetLongitudinalToolOnDrawToolActive,
-    deactivateOnIdentifyEnabledEpic
+    deactivateOnIdentifyEnabledEpic,
+    onMarkerChanged
 } from './setup';
 
 export {

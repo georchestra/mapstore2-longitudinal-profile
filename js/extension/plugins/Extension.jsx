@@ -36,7 +36,9 @@ import {
     changeReferential,
     changeDistance,
     changeGeometry,
-    toggleMaximize
+    toggleMaximize,
+    addMarker,
+    hideMarker
 } from "@js/extension/actions/longitudinal";
 import { setControlProperty } from "@mapstore/actions/controls";
 import { warning } from '@mapstore/actions/notifications';
@@ -102,7 +104,9 @@ export default {
             setup,
             tearDown,
             exportCSV,
-            warning
+            warning,
+            addMarker,
+            hideMarker
         })(Main),
     containers: {
         SidebarMenu: {

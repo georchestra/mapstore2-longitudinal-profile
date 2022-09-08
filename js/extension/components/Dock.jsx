@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 
-import React, {useState} from "react";
+import React, {useState, useMemo, useEffect} from "react";
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import {ButtonGroup, Col, Glyphicon, Nav, NavItem, Row} from 'react-bootstrap';
@@ -16,22 +16,33 @@ import ResponsivePanel from "@mapstore/components/misc/panels/ResponsivePanel";
 import tooltip from "@mapstore/components/misc/enhancers/tooltip";
 import Chart from "@js/extension/components/Chart";
 import Button from "@mapstore/components/misc/Button";
-import Loader from "@mapstore/components/misc/Loader";
 import Toolbar from "@mapstore/components/misc/toolbar/Toolbar";
 import ContainerDimensions from 'react-container-dimensions';
 import {Properties} from "@js/extension/components/Properties";
 import LoadingView from "@mapstore/components/misc/LoadingView";
+import {reproject} from "@mapstore/utils/CoordinatesUtils";
 
 const NavItemT = tooltip(NavItem);
 
-const ChartData = ({ points, messages, loading, maximized, toggleMaximize, boundingRect, dockStyle, ...props }) => {
-    const data = points ? points.map((point) => ({
+const ChartData = ({ points, messages, loading, maximized, toggleMaximize, boundingRect, dockStyle, referentiels, referential, addMarker, hideMarker, ...props }) => {
+    const data = useMemo(() => points ? points.map((point) => ({
         distance: point[0],
         x: point[1],
         y: point[2],
         altitude: point[3],
         incline: point[4]
-    })) : [];
+    })) : [], [points]);
+    const [marker, setMarker] = useState([]);
+
+    useEffect(() => {
+        if (marker.length) {
+            const point = reproject(marker, referentiels.find(el => el.layerName).projection, 'EPSG:4326');
+            addMarker({lng: point.y, lat: point.x, projection: 'EPSG:4326'});
+        } else {
+            hideMarker();
+        }
+    }, [marker]);
+
 
     const series = [{dataKey: "altitude", color: `#078aa3`}];
     const xAxis = {dataKey: "distance", show: false, showgrid: true};
@@ -57,7 +68,7 @@ const ChartData = ({ points, messages, loading, maximized, toggleMaximize, bound
     const content = loading
         ? <LoadingView />
         : (
-            <div className="longitudinal-container">
+            <div className="longitudinal-container" onMouseOut={() => marker.length && setMarker([])}>
                 <Toolbar
                     btnGroupProps={{
                         className: "chart-toolbar"
@@ -81,11 +92,19 @@ const ChartData = ({ points, messages, loading, maximized, toggleMaximize, bound
                 </Toolbar>
                 <ContainerDimensions>
                     {({ width, height }) => (
-                        <Chart
-                            {...options}
-                            height={maximized ? height - 115 : 400}
-                            width={maximized ? width - (dockStyle?.right ?? 0) - (dockStyle?.left ?? 0) : 520 }
-                            data={data} series={series} xAxis={xAxis} />
+                        <div onMouseOut={() => marker.length && setMarker([])}>
+                            <Chart
+                                onHover={(info) => {
+                                    const idx = info.points[0].pointIndex;
+                                    const point = data[idx];
+                                    setMarker([ point.x, point.y]);
+                                }}
+                                {...options}
+                                height={maximized ? height - 115 : 400}
+                                width={maximized ? width - (dockStyle?.right ?? 0) - (dockStyle?.left ?? 0) : 520 }
+                                data={data} series={series} xAxis={xAxis} />
+                        </div>
+
                     )}
                 </ContainerDimensions>
                 {
@@ -136,7 +155,7 @@ const Information = ({infos, messages, loading}) => {
         }
     ];
 
-    return loading ? <div className=" loading"><Loader size={176} /></div> : (<div className="longitudinal-container">
+    return loading ? <LoadingView /> : (<div className="longitudinal-container">
         {
             infoConfig.map((conf) => (
                 <div className="stats-entry" key={conf.prop}>

@@ -40,7 +40,8 @@ const Plot = React.lazy(() => import('@mapstore/components/charts/PlotlyChart'))
  * @prop {object[]} series descriptor for every series. Contains the y axis (or value) `dataKey`
  */
 export default function Chart({
-    onInitialized,
+    onInitialized = () => {},
+    onHover = () => {},
     ...props
 }) {
     const { data, layout, config } = toPlotly(props);
@@ -54,6 +55,7 @@ export default function Chart({
         <Suspense fallback={<LoadingView />}>
             <Plot
                 onInitialized={onInitialized}
+                onHover={onHover}
                 data={data.flat()}
                 layout={layout}
                 config={config}

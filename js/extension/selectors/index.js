@@ -6,10 +6,16 @@
  * LICENSE file in the root directory of this source tree.
 */
 
-import {CONTROL_DOCK_NAME, CONTROL_NAME, CONTROL_PROPERTIES_NAME} from "@js/extension/constants";
+import {
+    CONTROL_DOCK_NAME,
+    CONTROL_NAME,
+    CONTROL_PROPERTIES_NAME,
+    LONGITUDINAL_VECTOR_LAYER_ID
+} from "@js/extension/constants";
 import {getSelectedLayer} from "@mapstore/selectors/layers";
 import {mapSelector} from "@mapstore/selectors/map";
-import {get} from "lodash";
+import {get, head} from "lodash";
+import {additionalLayersSelector} from "@mapstore/selectors/additionallayers";
 
 export const isInitialized = (state) => state?.longitudinal?.initialized;
 export const isLoading = (state) => state?.longitudinal?.loading;
@@ -41,3 +47,4 @@ export const isListeningClick = (state) => !!(get(mapSelector(state), 'eventList
 
 export const isMaximized = (state) => state?.longitudinal?.maximized;
 
+export const vectorLayerFeaturesSelector = (state) => head(additionalLayersSelector(state).filter(l => l.id === LONGITUDINAL_VECTOR_LAYER_ID))?.options?.features;

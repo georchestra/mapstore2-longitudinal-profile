@@ -17,11 +17,14 @@
               "noLayerSelected": "Please select layer first.",
               "layerNotSupported": "Selected layer is not supported. Please select WMS, WFS or vector layer.",
               "noFeatureInPoint": "Line feature was not found at selected point.",
-              "noLineFeatureFound": "Line feature was not found in imported file."
+              "noLineFeatureFound": "Line feature was not found in imported file.",
+              "fallbackToProjection": "Projection of default referential \"{defaultReferential}\" is not supported. Falling back to referential \"{referential}\" with \"{projection}\" projection."
             },
-            "error": {
+            "errors": {
               "loadingError": "Error loading data for longitudinal profile",
-              "unableToSetupPlugin": "Unable to setup longitudinal profile extension"
+              "unableToSetupPlugin": "Unable to setup longitudinal profile extension",
+              "defaultReferentialNotFound": "Default referential is configured but cannot be found in referentials list. Please update extension configuration.",
+              "projectionNotSupported": "Referential with projection supported by map cannot be found. Please update extension configuration or add desired projection into app configuration."
             },
             "elevation": "Elevation (m)",
             "distance": "Distance (m)",
