@@ -437,9 +437,7 @@
             }, {
               "name": "CRSSelector",
               "cfg": {
-                "additionalCRS": {
-
-                },
+                "additionalCRS": {},
                 "filterAllowedCRS": [
                   "EPSG:4326",
                   "EPSG:3857"

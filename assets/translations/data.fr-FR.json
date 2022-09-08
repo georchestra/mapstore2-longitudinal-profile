@@ -17,11 +17,15 @@
         "noLayerSelected": "Veuillez d'abord sélectionner le calque.",
         "layerNotSupported": "La couche sélectionnée n'est pas prise en charge. Veuillez sélectionner une couche WMS, WFS ou vectorielle.",
         "noFeatureInPoint": "L'entité linéaire n'a pas été trouvée au point sélectionné.",
-        "noLineFeatureFound": "L'élément de ligne n'a pas été trouvé dans le fichier importé."
+        "noLineFeatureFound": "L'élément de ligne n'a pas été trouvé dans le fichier importé.",
+        "fallbackToProjection": "La projection du référentiel par défaut \"{defaultReferential}\" n'est pas prise en charge. Revenir au référentiel \"{referential}\" avec \"{projection}\" projection."
+
       },
       "error": {
         "loadingError": "Erreur lors du chargement des données pour le profil longitudinal",
-        "unableToSetupPlugin": "Impossible de configurer l'extension du profil longitudinal"
+        "unableToSetupPlugin": "Impossible de configurer l'extension du profil longitudinal",
+        "defaultReferentialNotFound": "Le référentiel par défaut est configuré mais introuvable dans la liste des référentiels. Veuillez mettre à jour la configuration de l'extension.",
+        "projectionNotSupported": "Le référentiel avec projection prise en charge par la carte est introuvable. Veuillez mettre à jour la configuration de l'extension ou ajouter la projection souhaitée dans la configuration de l'application."
       },
       "elevation": "Altitude (m)",
       "distance": "Distance (m)",
@@ -36,6 +40,12 @@
         "heading": "<p><h4>Déposez vos fichiers JSON ici</h4><small>ou</small></p>",
         "selectFiles": "Sélectionner les fichiers...",
         "infoSupported": "<p><small>Types de fichiers pris en charge : GeoJSON</small></p>"
+      }
+    },
+    "plugins": {
+      "LongitudinalProfile": {
+        "description": "Outil qui affiche la fenêtre À propos",
+        "title": "Profil longitudinal"
       }
     }
   }

@@ -19,6 +19,8 @@ export const CHANGE_REFERENTIAL = "LONGITUDINAL:CHANGE_REFERENTIAL";
 export const CHANGE_DISTANCE = "LONGITUDINAL:CHANGE_DISTANCE";
 export const CHANGE_GEOMETRY = "LONGITUDINAL:CHANGE_GEOMETRY";
 export const TOGGLE_MAXIMIZE = "LONGITUDINAL:TOGGLE_MAXIMIZE";
+export const ADD_MARKER = "LONGITUDINAL:ADD_MARKER";
+export const HIDE_MARKER = "LONGITUDINAL:HIDE_MARKER";
 
 export const setup = (config) => ({
     type: SETUP,
@@ -52,10 +54,11 @@ export const toggleMode = (mode) => ({
     mode
 });
 
-export const addProfileData = (infos, points) => ({
+export const addProfileData = (infos, points, projection) => ({
     type: ADD_PROFILE_DATA,
     infos,
-    points
+    points,
+    projection
 });
 
 export const loading = (state) => ({
@@ -76,4 +79,11 @@ export const changeGeometry = (geometry) => ({
 });
 export const toggleMaximize = () => ({
     type: TOGGLE_MAXIMIZE
+});
+export const addMarker = (point) => ({
+    type: ADD_MARKER,
+    point
+});
+export const hideMarker = () => ({
+    type: HIDE_MARKER
 });

@@ -24,6 +24,7 @@ import {
     isDockOpen, isInitialized,
     isParametersOpen, isSupportedLayer,
     pointsSelector, referentialSelector,
+    projectionSelector,
     isMaximized, isLoading
 } from "@js/extension/selectors";
 import longitudinal from '@js/extension/reducers/longitudinal';
@@ -36,7 +37,9 @@ import {
     changeReferential,
     changeDistance,
     changeGeometry,
-    toggleMaximize
+    toggleMaximize,
+    addMarker,
+    hideMarker
 } from "@js/extension/actions/longitudinal";
 import { setControlProperty } from "@mapstore/actions/controls";
 import { warning } from '@mapstore/actions/notifications';
@@ -57,6 +60,7 @@ const selector = (state) => ({
     showDock: isDockOpen(state),
     infos: infosSelector(state),
     points: pointsSelector(state),
+    projection: projectionSelector(state),
     referential: referentialSelector(state),
     distance: distanceSelector(state),
     dockStyle: mapLayoutValuesSelector(state, { height: true, right: true }, true),
@@ -102,7 +106,9 @@ export default {
             setup,
             tearDown,
             exportCSV,
-            warning
+            warning,
+            addMarker,
+            hideMarker
         })(Main),
     containers: {
         SidebarMenu: {

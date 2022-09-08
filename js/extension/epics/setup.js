@@ -14,7 +14,7 @@ import proj4 from 'proj4';
 
 import {
     configSelector, dataSourceMode, geometrySelector,
-    isDockOpen, isMaximized
+    isDockOpen, isMaximized, vectorLayerFeaturesSelector
 } from "@js/extension/selectors";
 import {
     CONTROL_DOCK_NAME, CONTROL_NAME, CONTROL_PROPERTIES_NAME,
@@ -27,7 +27,7 @@ import {
     addProfileData, changeDistance, changeReferential, initialized,
     loading, openDock, changeGeometry, toggleMaximize, toggleMode,
     SETUP, TEAR_DOWN, TOGGLE_MODE,
-    CHANGE_GEOMETRY, CHANGE_DISTANCE, CHANGE_REFERENTIAL
+    CHANGE_GEOMETRY, CHANGE_DISTANCE, CHANGE_REFERENTIAL, ADD_MARKER, HIDE_MARKER
 } from "@js/extension/actions/longitudinal";
 import {styleFeatures} from "@js/extension/utils/geojson";
 
@@ -70,7 +70,7 @@ const deactivate = () => Rx.Observable.from(DEACTIVATE_ACTIONS);
  */
 export const setupLongitudinalExtension = (action$, store) =>
     action$.ofType(SETUP)
-        .switchMap(({config: { referentiels, distances, defaultDistance, defaultReferentiel } = {}}) => {
+        .switchMap(({config: { referentiels, distances, defaultDistance, defaultReferentiel: defaultReferentialName } = {}}) => {
             const state = store.getState();
             // adds projections from localConfig.json
             // Extension do not see the state proj4 of MapStore (can not reproject in custom CRS as mapstore does)
@@ -80,9 +80,14 @@ export const setupLongitudinalExtension = (action$, store) =>
                 proj4.defs(proj.code, proj.def);
             });
 
+            const defaultReferential = referentiels.find(el => el.layerName === defaultReferentialName);
+            if (defaultReferentialName && !defaultReferential) {
+                return Rx.Observable.of(error({ title: "Error", message: "longitudinal.errors.defaultReferentialNotFound", autoDismiss: 10 }));
+            }
+
             return Rx.Observable.of(
                 updateDockPanelsList(CONTROL_DOCK_NAME, "add", "right"),
-                changeReferential(defaultReferentiel ?? referentiels[0].layerName),
+                changeReferential(defaultReferentialName ?? referentiels[0].layerName),
                 changeDistance(defaultDistance ?? distances[0]),
                 updateAdditionalLayer(
                     LONGITUDINAL_VECTOR_LAYER_ID,
@@ -100,7 +105,7 @@ export const setupLongitudinalExtension = (action$, store) =>
         })
         .catch((e) => {
             console.log(e); // eslint-disable-line no-console
-            return Rx.Observable.of(error({ title: "Error", message: "longitudinal.errors.unableToSetupPlugin" }));
+            return Rx.Observable.of(error({ title: "Error", message: "longitudinal.errors.unableToSetupPlugin", autoDismiss: 10 }));
         });
 
 /**
@@ -187,6 +192,7 @@ export const onChartPropsChange = (action$, store) =>
             const wpsurl = configSelector(state)?.wpsurl;
             const referentiel = configSelector(state)?.referential;
             const distance = configSelector(state)?.distance;
+
             return executeProcess(wpsurl, profileEnLong({identifier, geometry, distance, referentiel }),
                 {outputsExtractor: makeOutputsExtractor()})
                 .switchMap((result) => {
@@ -217,7 +223,7 @@ export const onChartPropsChange = (action$, store) =>
                                 visibility: true
                             }),
                         changeMapView({x: center[0], y: center[1]}, map.zoom, [minx, minY, maxX, maxY], map.size, null, map.projection),
-                        addProfileData(infos, points)
+                        addProfileData(infos, points, geometry.projection)
                     ]) : Rx.Observable.empty();
                 })
                 .catch(e => {
@@ -235,6 +241,47 @@ export const onChartPropsChange = (action$, store) =>
                         position: "tc"
                     }))
                 ));
+        });
+
+export const onMarkerChanged = (action$, store) =>
+    action$.ofType(ADD_MARKER, HIDE_MARKER)
+        .switchMap(({point}) => {
+            const state = store.getState();
+            let featuresCollection = vectorLayerFeaturesSelector(state);
+            if (point) {
+                const pointFeature = {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [point.lat, point.lng],
+                        projection: point.projection
+                    },
+                    style: {
+                        iconShape: 'circle',
+                        iconColor: 'blue'
+                    }
+                };
+                featuresCollection = featuresCollection?.length > 0 ? [featuresCollection[0], pointFeature] : [pointFeature];
+            } else {
+                if (featuresCollection?.length) {
+                    featuresCollection = [featuresCollection[0]];
+                } else {
+                    featuresCollection = [];
+                }
+            }
+            return Rx.Observable.from([
+                updateAdditionalLayer(
+                    LONGITUDINAL_VECTOR_LAYER_ID,
+                    LONGITUDINAL_OWNER,
+                    'overlay',
+                    {
+                        id: LONGITUDINAL_VECTOR_LAYER_ID,
+                        features: featuresCollection,
+                        type: "vector",
+                        name: "selectedLine",
+                        visibility: true
+                    })
+            ]);
         });
 
 /**
