@@ -35,7 +35,7 @@ import executeProcess, {makeOutputsExtractor} from "@mapstore/observables/wps/ex
 import {profileEnLong} from "@js/extension/observables/wps/profile";
 import {wrapStartStop} from "@mapstore/observables/epics";
 
-import {error, warning} from "@mapstore/actions/notifications";
+import {error} from "@mapstore/actions/notifications";
 import {UPDATE_MAP_LAYOUT, updateDockPanelsList, updateMapLayout} from "@mapstore/actions/maplayout";
 import {changeMapView, registerEventListener, unRegisterEventListener} from "@mapstore/actions/map";
 import {removeAdditionalLayer, updateAdditionalLayer} from "@mapstore/actions/additionallayers";
@@ -52,7 +52,6 @@ import {mapSelector} from "@mapstore/selectors/map";
 import {reprojectGeoJson} from "@mapstore/utils/CoordinatesUtils";
 import {shutdownToolOnAnotherToolDrawing} from "@mapstore/utils/ControlUtils";
 import {localConfigSelector} from "@mapstore/selectors/localConfig";
-import {DEFAULT_ANNOTATIONS_STYLES} from "@mapstore/utils/AnnotationsUtils";
 
 const OFFSET = 550;
 
@@ -76,34 +75,14 @@ export const setupLongitudinalExtension = (action$, store) =>
             // adds projections from localConfig.json
             // Extension do not see the state proj4 of MapStore (can not reproject in custom CRS as mapstore does)
             // so projections have to be registered again in the extension.
-            const projectionsList = [];
             const {projectionDefs = []} = localConfigSelector(state) ?? {};
             projectionDefs.forEach((proj) => {
                 proj4.defs(proj.code, proj.def);
-                projectionsList.push(proj.code);
             });
 
             const defaultReferential = referentiels.find(el => el.layerName === defaultReferentialName);
             if (defaultReferentialName && !defaultReferential) {
                 return Rx.Observable.of(error({ title: "Error", message: "longitudinal.errors.defaultReferentialNotFound", autoDismiss: 10 }));
-            }
-
-            if (!projectionsList.includes(defaultReferential.projection)) {
-                const fallback = referentiels.filter(el => el.projection).find(el => projectionsList.includes(el.projection));
-                if (fallback) {
-                    return Rx.Observable.of(
-                        warning({
-                            title: "Warning",
-                            message: "longitudinal.warnings.fallbackToProjection",
-                            values: {
-                                projection: fallback.projection,
-                                referential: fallback.layerName,
-                                defaultReferential: defaultReferential.layerName
-                            },
-                            autoDismiss: 10
-                        }));
-                }
-                return Rx.Observable.of(error({ title: "Error", message: "longitudinal.errors.projectionNotSupported", autoDismiss: 10 }));
             }
 
             return Rx.Observable.of(
@@ -214,9 +193,7 @@ export const onChartPropsChange = (action$, store) =>
             const referentiel = configSelector(state)?.referential;
             const distance = configSelector(state)?.distance;
 
-            const reprojectedGeometry = reprojectGeoJson(geometry, geometry.projection, 'EPSG:2154');
-            reprojectedGeometry.projection = 'EPSG:2154';
-            return executeProcess(wpsurl, profileEnLong({identifier, geometry: reprojectedGeometry, distance, referentiel }),
+            return executeProcess(wpsurl, profileEnLong({identifier, geometry, distance, referentiel }),
                 {outputsExtractor: makeOutputsExtractor()})
                 .switchMap((result) => {
                     const feature = {
@@ -246,7 +223,7 @@ export const onChartPropsChange = (action$, store) =>
                                 visibility: true
                             }),
                         changeMapView({x: center[0], y: center[1]}, map.zoom, [minx, minY, maxX, maxY], map.size, null, map.projection),
-                        addProfileData(infos, points)
+                        addProfileData(infos, points, geometry.projection)
                     ]) : Rx.Observable.empty();
                 })
                 .catch(e => {
@@ -279,7 +256,10 @@ export const onMarkerChanged = (action$, store) =>
                         coordinates: [point.lat, point.lng],
                         projection: point.projection
                     },
-                    style: DEFAULT_ANNOTATIONS_STYLES.Point
+                    style: {
+                        iconShape: 'circle',
+                        iconColor: 'blue'
+                    }
                 };
                 featuresCollection = featuresCollection?.length > 0 ? [featuresCollection[0], pointFeature] : [pointFeature];
             } else {

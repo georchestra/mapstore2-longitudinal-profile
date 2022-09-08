@@ -31,6 +31,7 @@ export const isActiveMenu = (state) => isParametersOpen(state) || dataSourceMode
 
 export const infosSelector = (state) => state?.longitudinal?.infos;
 export const pointsSelector = (state) => state?.longitudinal?.points;
+export const projectionSelector = (state) => state?.longitudinal?.projection;
 export const configSelector = (state) => state?.longitudinal?.config;
 export const referentialSelector = (state) => configSelector(state)?.referential;
 export const distanceSelector = (state) => configSelector(state)?.distance;

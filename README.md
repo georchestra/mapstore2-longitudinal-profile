@@ -44,7 +44,6 @@ For example the plugin allows configuration of the following properties
         {
           "layerName": "sfdem",
           "title": "sfdem",
-          "projection": "EPSG:2154"
         }
     ],
     "distances": [

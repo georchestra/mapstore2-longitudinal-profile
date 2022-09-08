@@ -24,6 +24,7 @@ import {
     isDockOpen, isInitialized,
     isParametersOpen, isSupportedLayer,
     pointsSelector, referentialSelector,
+    projectionSelector,
     isMaximized, isLoading
 } from "@js/extension/selectors";
 import longitudinal from '@js/extension/reducers/longitudinal';
@@ -59,6 +60,7 @@ const selector = (state) => ({
     showDock: isDockOpen(state),
     infos: infosSelector(state),
     points: pointsSelector(state),
+    projection: projectionSelector(state),
     referential: referentialSelector(state),
     distance: distanceSelector(state),
     dockStyle: mapLayoutValuesSelector(state, { height: true, right: true }, true),

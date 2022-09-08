@@ -23,6 +23,7 @@ const DEFAULT_STATE = {
     geometry: false,
     infos: false,
     points: false,
+    projection: false,
     maximized: false,
     config: {}
 };
@@ -71,11 +72,12 @@ export default function longitudinal(state = DEFAULT_STATE, action) {
             loading: action.state
         };
     case ADD_PROFILE_DATA:
-        const {infos, points} = action;
+        const {infos, points, projection} = action;
         return {
             ...state,
             infos,
-            points
+            points,
+            projection
         };
     case TOGGLE_MODE:
         return {

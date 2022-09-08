@@ -88,12 +88,14 @@ describe('Test correctness of the actions', () => {
     it('addProfileData', () => {
         const infos = { prop1: true, prop2: 10, prop3: 'test'};
         const points = [[[1, 2, 5], [2, 3, 5]]];
-        const action = addProfileData(infos, points);
+        const projection = 'EPSG:3857';
+        const action = addProfileData(infos, points, projection);
         expect(action).toExist();
         expect(action.type).toBe(ADD_PROFILE_DATA);
         expect(action.infos).toEqual(infos);
         expect(action.points[0]).toEqual(points[0]);
         expect(action.points[1]).toEqual(points[1]);
+        expect(action.projection).toEqual(projection);
     });
 
     it('loading', () => {

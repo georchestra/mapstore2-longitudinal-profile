@@ -24,7 +24,7 @@ import {reproject} from "@mapstore/utils/CoordinatesUtils";
 
 const NavItemT = tooltip(NavItem);
 
-const ChartData = ({ points, messages, loading, maximized, toggleMaximize, boundingRect, dockStyle, referentiels, referential, addMarker, hideMarker, ...props }) => {
+const ChartData = ({ points, projection, messages, loading, maximized, toggleMaximize, boundingRect, dockStyle, referentiels, referential, addMarker, hideMarker, ...props }) => {
     const data = useMemo(() => points ? points.map((point) => ({
         distance: point[0],
         x: point[1],
@@ -36,7 +36,7 @@ const ChartData = ({ points, messages, loading, maximized, toggleMaximize, bound
 
     useEffect(() => {
         if (marker.length) {
-            const point = reproject(marker, referentiels.find(el => el.layerName).projection, 'EPSG:4326');
+            const point = reproject([marker[0], marker[1]], marker[2], 'EPSG:4326');
             addMarker({lng: point.y, lat: point.x, projection: 'EPSG:4326'});
         } else {
             hideMarker();
@@ -55,9 +55,7 @@ const ChartData = ({ points, messages, loading, maximized, toggleMaximize, bound
         cartesian: true,
         popup: false,
         xAxisOpts: {
-            hide: false,
-            format: '.2s',
-            tickSuffix: ' m'
+            hide: false
         },
         yAxisOpts: {
             tickSuffix: ' m'
@@ -97,7 +95,7 @@ const ChartData = ({ points, messages, loading, maximized, toggleMaximize, bound
                                 onHover={(info) => {
                                     const idx = info.points[0].pointIndex;
                                     const point = data[idx];
-                                    setMarker([ point.x, point.y]);
+                                    setMarker([ point.x, point.y, projection]);
                                 }}
                                 {...options}
                                 height={maximized ? height - 115 : 400}

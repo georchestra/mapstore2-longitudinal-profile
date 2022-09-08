@@ -54,10 +54,11 @@ export const toggleMode = (mode) => ({
     mode
 });
 
-export const addProfileData = (infos, points) => ({
+export const addProfileData = (infos, points, projection) => ({
     type: ADD_PROFILE_DATA,
     infos,
-    points
+    points,
+    projection
 });
 
 export const loading = (state) => ({
