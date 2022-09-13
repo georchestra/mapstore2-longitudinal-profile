@@ -46,7 +46,8 @@
         "@geosolutions/acorn-jsx": "4.0.2",
         "@geosolutions/jsdoc": "3.4.4",
         "@geosolutions/mocha": "6.2.1-3",
-        "@mapstore/eslint-config-mapstore": "1.0.3",
+        "@mapstore/eslint-config-mapstore": "1.0.5",
+        "@testing-library/react": "12.1.5",
         "axios-mock-adapter": "1.16.0",
         "babel-loader": "8.0.5",
         "babel-plugin-add-module-exports": "0.1.4",
@@ -112,8 +113,7 @@
         "webpack": "5.9.0",
         "webpack-bundle-size-analyzer": "2.0.2",
         "webpack-cli": "4.10.0",
-        "webpack-dev-server": "3.11.0",
-        "zip-webpack-plugin": "3.0.0"
+        "webpack-dev-server": "3.11.0"
     },
     "dependencies": {
         "mapstore2": "file:MapStore2"
