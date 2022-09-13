@@ -8,6 +8,7 @@
 
 import {connect} from "react-redux";
 import { createSelector } from 'reselect';
+import {createPlugin} from "@mapstore/utils/PluginsUtils";
 
 import { name } from '../../../config';
 
@@ -87,8 +88,7 @@ export const LongitudinalNav = connect((state) => ({
     onToggleParameters: setControlProperty.bind(this, "longitudinalProfileParameters", "enabled", true, true)
 })(Menu);
 
-export default {
-    name,
+export default createPlugin(name, {
     component: connect(
         createSelector(
             [selector],
@@ -134,4 +134,4 @@ export default {
     },
     epics,
     reducers: { longitudinal }
-};
+});

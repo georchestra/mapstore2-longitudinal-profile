@@ -116,7 +116,8 @@
         "webpack-dev-server": "3.11.0"
     },
     "dependencies": {
-        "mapstore2": "file:MapStore2"
+        "mapstore2": "file:MapStore2",
+        "git-revision-webpack-plugin": "5.0.0"
     },
     "scripts": {
         "postinstall": "node MapStore2/utility/build/postInstall.js",
